@@ -26,7 +26,7 @@ services:
       - "18120:18120/tcp"
     volumes:
       - "./freeradius/config/freeradius:/etc/freeradius"
-      - "./freeradius/logs:/var/log/freeradius"
+      - "./services/freeradius/logs:/var/log/freeradius"
     healthcheck:
       test: ["CMD", "radtest", "user", "pass", "localhost", "0", "testing123"]
       interval: 30s
