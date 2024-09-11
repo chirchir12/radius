@@ -9,12 +9,13 @@ defmodule Radius.Auth.Radcheck do
     field :value, :string
     field :customer, Ecto.UUID
     field :service, :string, virtual: true
+    field :expire_on, :utc_datetime
   end
 
   def changeset(radcheck, attrs) do
     radcheck
-    |> cast(attrs, [:username, :attribute, :op, :value, :customer, :service])
-    |> validate_required([:username, :attribute, :op, :value, :service])
+    |> cast(attrs, [:username, :attribute, :op, :value, :customer, :service, :expire_on])
+    |> validate_required([:username, :attribute, :op, :value, :service, :expire_on])
     |> validate_service()
   end
 
