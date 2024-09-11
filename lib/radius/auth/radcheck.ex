@@ -7,12 +7,27 @@ defmodule Radius.Auth.Radcheck do
     field :attribute, :string
     field :op, :string
     field :value, :string
-    field :companyid, :integer, default: nil
+    field :customer, Ecto.UUID
+    field :service, :string, virtual: true
   end
 
   def changeset(radcheck, attrs) do
     radcheck
-    |> cast(attrs, [:username, :attribute, :op, :value, :companyid])
-    |> validate_required([:username, :attribute, :op, :value, :companyid])
+    |> cast(attrs, [:username, :attribute, :op, :value, :customer, :service])
+    |> validate_required([:username, :attribute, :op, :value, :service])
+    |> validate_service()
+  end
+
+  defp validate_service(changeset) do
+    case get_field(changeset, :service) do
+      "hotspot" ->
+        validate_required(changeset, [:customer])
+      "ppp" ->
+        put_change(changeset, :customer, nil)
+      nil ->
+        add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
+      _ ->
+        add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
+    end
   end
 end
