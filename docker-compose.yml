@@ -18,6 +18,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
     networks:
       - backend
+      - diralink_net
     ports:
       - "1812:1812/udp"
       - "1813:1813/udp"
