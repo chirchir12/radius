@@ -1,21 +1,44 @@
-version: "3.8"
-
+name: diralink
 services:
   freeradius:
+    container_name: diralink-radius
+    restart: always
     build:
-      context: ./freeradius
+      context: ./services/freeradius
       dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    environment:
+      DB_TYPE: "postgresql"
+      DB_SERVER: ${DB_HOST}
+      DB_PORT: "5432"
+      DB_NAME: ${DB_DATABASE}
+      DB_USER: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - backend
     ports:
       - "1812:1812/udp"
       - "1813:1813/udp"
+      - "18120:18120/tcp"
     volumes:
-      - ./logs:/var/log/freeradius
-    command: ["radiusd", "-X"]
-
-  app:
+      - "./freeradius/config/freeradius:/etc/freeradius"
+      - "./freeradius/logs:/var/log/freeradius"
+    healthcheck:
+      test: ["CMD", "radtest", "user", "pass", "localhost", "0", "testing123"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: diralink-backend
+    networks:
+      - backend
     depends_on:
       - freeradius
       - db
@@ -24,13 +47,28 @@ services:
     # Add other app-specific configurations here
 
   db:
-    image: postgres:14-alpine
+    container_name: diralink-radius-db
+    image: postgres:14.13-alpine
+    restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=radius_dev
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    networks:
+      - backend
+    ports:
+      - "54322:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:
+    external: true
 
 volumes:
   logs:
