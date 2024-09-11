@@ -17,24 +17,29 @@ defmodule RadiusWeb do
   those modules here.
   """
 
+  # This module, RadiusWeb, serves as the main configuration point for the web interface of the Radius application.
+  # It defines several functions that set up different parts of the web framework:
+
+  # Defines static file paths that Phoenix will serve
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
+  # Configures the router with common imports
   def router do
     quote do
       use Phoenix.Router, helpers: false
-
-      # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
     end
   end
 
+  # Sets up Phoenix channels for real-time communication
   def channel do
     quote do
       use Phoenix.Channel
     end
   end
 
+  # Configures controllers with necessary imports and settings
   def controller do
     quote do
       use Phoenix.Controller,
@@ -48,6 +53,7 @@ defmodule RadiusWeb do
     end
   end
 
+  # Sets up verified routes for the application
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
@@ -57,10 +63,15 @@ defmodule RadiusWeb do
     end
   end
 
+  # This macro allows the use of RadiusWeb functionalities in other modules
   @doc """
   When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+  # The `__using__` macro is a special Elixir construct that allows this module to be used with `use RadiusWeb, :something`.
+  # It will call the appropriate function (router, channel, controller, etc.) based on the atom passed to it.
+  # This design allows for a clean and modular setup of different web components in the Radius application.
 end

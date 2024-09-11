@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  freeradius:
+    build:
+      context: ./freeradius
+      dockerfile: Dockerfile
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
+    volumes:
+      - ./logs:/var/log/freeradius
+    command: ["radiusd", "-X"]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - freeradius
+      - db
+    environment:
+      - DATABASE_URL=ecto://postgres:postgres@db/radius_dev
+    # Add other app-specific configurations here
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=radius_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  logs:
+  postgres_data:
