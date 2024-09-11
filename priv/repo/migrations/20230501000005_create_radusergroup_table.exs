@@ -6,7 +6,7 @@ defmodule Radius.Repo.Migrations.CreateRadusergroupTable do
       add :username, :string, null: false
       add :groupname, :string, null: false
       add :priority, :integer
-      add :customer, Ecto.UUID
+      add :customer, :uuid
     end
 
     create index(:radusergroup, [:username])

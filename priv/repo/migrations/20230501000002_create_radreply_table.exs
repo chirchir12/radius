@@ -7,7 +7,7 @@ defmodule Radius.Repo.Migrations.CreateRadreplyTable do
       add :attribute, :string, null: false
       add :op, :string, size: 2, null: false
       add :value, :string, null: false
-      add :customer, Ecto.UUID
+      add :customer, :uuid
     end
 
     create index(:radreply, [:username])
