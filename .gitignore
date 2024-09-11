@@ -29,4 +29,4 @@ radius-*.tar
 
 # Ignore PostgreSQL data directory
 /postgres_data
-
+.env
