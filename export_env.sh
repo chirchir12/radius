@@ -7,8 +7,10 @@ do
   key=$(echo $key | xargs)
   value=$(echo $value | xargs)
   
-  # Export the variable if it's not empty
-  if [ ! -z "$key" ]; then
+  # Ignore comments and export non-empty variables
+  if [[ ! "$key" =~ ^#.* ]] && [ ! -z "$key" ]; then
     export "$key=$value"
+    echo "Exported: $key=$value"
   fi
 done < .env
+
