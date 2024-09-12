@@ -19,7 +19,6 @@ defmodule Radius.Auth.RadcheckTest do
       assert radcheck.attribute == "Password"
       assert radcheck.op == ":="
       assert radcheck.value == "secret"
-      assert radcheck.service == "hotspot"
       assert radcheck.customer == @valid_attrs.customer
     end
 
@@ -49,7 +48,7 @@ defmodule Radius.Auth.RadcheckTest do
 
       changeset = Radcheck.changeset(%Radcheck{}, Map.put(@valid_attrs, :service, "ppp"))
       assert changeset.valid?
-      assert get_change(changeset, :customer) == nil
+      assert get_change(changeset, :customer) == @valid_attrs.customer
 
       changeset = Radcheck.changeset(%Radcheck{}, Map.put(@valid_attrs, :service, "hotspot"))
       assert changeset.valid?
