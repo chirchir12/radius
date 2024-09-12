@@ -44,13 +44,13 @@ defmodule Radius.Auth.Hotspot do
 
   def logout(customer) do
     case Repo.transaction(fn ->
-      with {:ok, %Radcheck{} = check_session} <- Radcheck.get_by(customer),
-           {:ok, %Radcheck{}} <- Radcheck.delete_radcheck(check_session),
-           {:ok, %Radusergroup{} = group_session} <- Radusergroup.get_by(customer),
-           {:ok, %Radusergroup{}} <- Radusergroup.delete_radusergroup(group_session) do
-        :ok
-      end
-    end) do
+           with {:ok, %Radcheck{} = check_session} <- Radcheck.get_by(customer),
+                {:ok, %Radcheck{}} <- Radcheck.delete_radcheck(check_session),
+                {:ok, %Radusergroup{} = group_session} <- Radusergroup.get_by(customer),
+                {:ok, %Radusergroup{}} <- Radusergroup.delete_radusergroup(group_session) do
+             :ok
+           end
+         end) do
       {:ok, :ok} -> {:ok, :ok}
       {:ok, {:error, reason}} -> {:error, reason}
       {:error, reason} -> {:error, reason}

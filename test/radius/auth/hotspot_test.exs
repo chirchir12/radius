@@ -5,11 +5,7 @@ defmodule Radius.Auth.HotspotTest do
   alias Radius.Auth.Radcheck
   alias Radius.UserGroup.Radusergroup
 
-
-
-
   describe "login/1" do
-
     test "successfully creates radcheck and radusergroup entries" do
       attrs = %Hotspot{
         username: "testuser",
@@ -54,6 +50,7 @@ defmodule Radius.Auth.HotspotTest do
   describe "logout/1" do
     test "successfully deletes radcheck and radusergroup entries" do
       customer = "152b81fd-057e-49d5-8239-c608ee20f3a5"
+
       attrs = %Hotspot{
         username: "testuser",
         password: "testpass",
