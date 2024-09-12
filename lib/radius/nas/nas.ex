@@ -1,4 +1,4 @@
-defmodule Radius.NAS.Nas do
+defmodule Radius.Nas.Router do
   use Ecto.Schema
   import Ecto.Changeset
 
