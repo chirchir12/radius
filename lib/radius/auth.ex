@@ -10,12 +10,6 @@ defmodule Radius.Auth do
 
   def get_radcheck!(id), do: Repo.get!(Radcheck, id)
 
-  def create_radcheck(attrs \\ %{}) do
-    %Radcheck{}
-    |> Radcheck.changeset(attrs)
-    |> Repo.insert()
-  end
-
   def update_radcheck(%Radcheck{} = radcheck, attrs) do
     radcheck
     |> Radcheck.changeset(attrs)
@@ -43,9 +37,5 @@ defmodule Radius.Auth do
     radreply
     |> Radreply.changeset(attrs)
     |> Repo.update()
-  end
-
-  def delete_radreply(%Radreply{} = radreply) do
-    Repo.delete(radreply)
   end
 end

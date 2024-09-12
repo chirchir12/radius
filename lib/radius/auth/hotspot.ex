@@ -28,22 +28,30 @@ defmodule Radius.Auth.Hotspot do
       service: "hotspot"
     }
 
-    Repo.transaction(fn ->
-      with {:ok, %Radcheck{}} <- Radcheck.create_radcheck(check),
-           {:ok, %Radusergroup{}} <- Radusergroup.create_radusergroup(group) do
-        :ok
-      end
-    end)
+    case Repo.transaction(fn ->
+           with {:ok, %Radcheck{}} <- Radcheck.create_radcheck(check),
+                {:ok, %Radusergroup{}} <- Radusergroup.create_radusergroup(group) do
+             :ok
+           end
+         end) do
+      {:ok, :ok} -> {:ok, :ok}
+      {:ok, {:error, reason}} -> {:error, reason}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   def logout(customer) do
-    Repo.transaction(fn ->
+    case Repo.transaction(fn ->
       with {:ok, %Radcheck{} = check_session} <- Radcheck.get_by(customer),
            {:ok, %Radcheck{}} <- Radcheck.delete_radcheck(check_session),
            {:ok, %Radusergroup{} = group_session} <- Radusergroup.get_by(customer),
            {:ok, %Radusergroup{}} <- Radusergroup.delete_radusergroup(group_session) do
         :ok
       end
-    end)
+    end) do
+      {:ok, :ok} -> {:ok, :ok}
+      {:ok, {:error, reason}} -> {:error, reason}
+      {:error, reason} -> {:error, reason}
+    end
   end
 end
