@@ -16,7 +16,17 @@ defmodule Radius.Nas.Router do
 
   def changeset(nas, attrs) do
     nas
-    |> cast(attrs, [:nasname, :shortname, :type, :ports, :secret, :server, :community, :description, :companyid])
+    |> cast(attrs, [
+      :nasname,
+      :shortname,
+      :type,
+      :ports,
+      :secret,
+      :server,
+      :community,
+      :description,
+      :companyid
+    ])
     |> validate_required([:nasname, :shortname, :type, :secret, :companyid])
   end
 end

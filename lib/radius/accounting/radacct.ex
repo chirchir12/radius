@@ -31,7 +31,31 @@ defmodule Radius.Accounting.Radacct do
 
   def changeset(radacct, attrs) do
     radacct
-    |> cast(attrs, [:acctsessionid, :acctuniqueid, :username, :realm, :nasipaddress, :nasportid, :nasporttype, :acctstarttime, :acctupdatetime, :acctstoptime, :acctinterval, :acctsessiontime, :acctauthentic, :connectinfo_start, :connectinfo_stop, :acctinputoctets, :acctoutputoctets, :calledstationid, :callingstationid, :acctterminatecause, :servicetype, :framedprotocol, :framedipaddress])
+    |> cast(attrs, [
+      :acctsessionid,
+      :acctuniqueid,
+      :username,
+      :realm,
+      :nasipaddress,
+      :nasportid,
+      :nasporttype,
+      :acctstarttime,
+      :acctupdatetime,
+      :acctstoptime,
+      :acctinterval,
+      :acctsessiontime,
+      :acctauthentic,
+      :connectinfo_start,
+      :connectinfo_stop,
+      :acctinputoctets,
+      :acctoutputoctets,
+      :calledstationid,
+      :callingstationid,
+      :acctterminatecause,
+      :servicetype,
+      :framedprotocol,
+      :framedipaddress
+    ])
     |> validate_required([:acctsessionid, :acctuniqueid, :nasipaddress])
   end
 end

@@ -23,10 +23,13 @@ defmodule Radius.Auth.Radreply do
     case get_field(changeset, :service) do
       "hotspot" ->
         validate_required(changeset, [:customer])
+
       "ppp" ->
         put_change(changeset, :customer, nil)
+
       nil ->
         add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
+
       _ ->
         add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
     end

@@ -5,15 +5,46 @@ defmodule Radius.NasTest do
   alias Radius.Nas.Router
 
   describe "routers" do
-    @valid_attrs %{companyid: 42, nasname: "some nasname", shortname: "some shortname", type: "some type", ports: 42, secret: "some secret", server: "some server", community: "some community", description: "some description"}
-    @update_attrs %{companyid: 43, nasname: "updated nasname", shortname: "updated shortname", type: "updated type", ports: 43, secret: "updated secret", server: "updated server", community: "updated community", description: "updated description"}
-    @invalid_attrs %{companyid: nil, nasname: nil, shortname: nil, type: nil, ports: nil, secret: nil, server: nil, community: nil, description: nil}
+    @valid_attrs %{
+      companyid: 42,
+      nasname: "some nasname",
+      shortname: "some shortname",
+      type: "some type",
+      ports: 42,
+      secret: "some secret",
+      server: "some server",
+      community: "some community",
+      description: "some description"
+    }
+    @update_attrs %{
+      companyid: 43,
+      nasname: "updated nasname",
+      shortname: "updated shortname",
+      type: "updated type",
+      ports: 43,
+      secret: "updated secret",
+      server: "updated server",
+      community: "updated community",
+      description: "updated description"
+    }
+    @invalid_attrs %{
+      companyid: nil,
+      nasname: nil,
+      shortname: nil,
+      type: nil,
+      ports: nil,
+      secret: nil,
+      server: nil,
+      community: nil,
+      description: nil
+    }
 
     def router_fixture(attrs \\ %{}) do
       {:ok, router} =
         attrs
         |> Enum.into(@valid_attrs)
         |> Nas.create_router()
+
       router
     end
 

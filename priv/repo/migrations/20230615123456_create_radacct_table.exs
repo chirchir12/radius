@@ -30,8 +30,17 @@ defmodule Radius.Repo.Migrations.CreateRadacctTable do
     end
 
     create unique_index(:radacct, [:acct_unique_id])
-    create index(:radacct, [:acct_unique_id], where: "acct_stop_time IS NULL", name: :radacct_active_session_idx)
-    create index(:radacct, [:nas_ip_address, :acct_start_time], where: "acct_stop_time IS NULL", name: :radacct_bulk_close)
+
+    create index(:radacct, [:acct_unique_id],
+             where: "acct_stop_time IS NULL",
+             name: :radacct_active_session_idx
+           )
+
+    create index(:radacct, [:nas_ip_address, :acct_start_time],
+             where: "acct_stop_time IS NULL",
+             name: :radacct_bulk_close
+           )
+
     create index(:radacct, [:acct_start_time, :username], name: :radacct_start_user_idx)
   end
 end

@@ -6,6 +6,7 @@ defmodule Radius.Nas do
   def list_routers(company_id) do
     {:ok, Repo.all(from r in Router, where: r.companyid == ^company_id)}
   end
+
   def list_routers do
     {:ok, Repo.all(Router)}
   end
