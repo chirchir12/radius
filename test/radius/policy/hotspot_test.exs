@@ -20,7 +20,7 @@ defmodule Radius.Policy.HotspotTest do
                Repo.all(from c in Radgroupcheck, where: c.groupname == ^attrs.plan)
 
       assert check1.attribute == "Mikrotik-Rate-Limit"
-      assert check1.value == "10/M5/M"
+      assert check1.value == "10M/5M"
       assert check2.attribute == "Session-Timeout"
       assert check2.value == "3600"
 
@@ -29,7 +29,7 @@ defmodule Radius.Policy.HotspotTest do
                Repo.all(from r in Radgroupreply, where: r.groupname == ^attrs.plan)
 
       assert reply1.attribute == "Mikrotik-Rate-Limit"
-      assert reply1.value == "10/M5/M"
+      assert reply1.value == "10M/5M"
       assert reply2.attribute == "Session-Timeout"
       assert reply2.value == "3600"
     end
@@ -74,7 +74,7 @@ defmodule Radius.Policy.HotspotTest do
                Repo.all(from c in Radgroupcheck, where: c.groupname == ^updated_attrs.plan)
 
       assert check1.attribute == "Mikrotik-Rate-Limit"
-      assert check1.value == "20/M10/M"
+      assert check1.value == "20M/10M"
       assert check2.attribute == "Session-Timeout"
       assert check2.value == "7200"
 
@@ -83,7 +83,7 @@ defmodule Radius.Policy.HotspotTest do
                Repo.all(from r in Radgroupreply, where: r.groupname == ^updated_attrs.plan)
 
       assert reply1.attribute == "Mikrotik-Rate-Limit"
-      assert reply1.value == "20/M10/M"
+      assert reply1.value == "20M/10M"
       assert reply2.attribute == "Session-Timeout"
       assert reply2.value == "7200"
     end

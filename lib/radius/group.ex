@@ -16,12 +16,6 @@ defmodule Radius.Group do
     |> Repo.insert()
   end
 
-  def update_radgroupcheck(%Radgroupcheck{} = radgroupcheck, attrs) do
-    radgroupcheck
-    |> Radgroupcheck.changeset(attrs)
-    |> Repo.update()
-  end
-
   def delete_radgroupcheck(%Radgroupcheck{} = radgroupcheck) do
     Repo.delete(radgroupcheck)
   end
@@ -37,12 +31,6 @@ defmodule Radius.Group do
     %Radgroupreply{}
     |> Radgroupreply.changeset(attrs)
     |> Repo.insert()
-  end
-
-  def update_radgroupreply(%Radgroupreply{} = radgroupreply, attrs) do
-    radgroupreply
-    |> Radgroupreply.changeset(attrs)
-    |> Repo.update()
   end
 
   def delete_radgroupreply(%Radgroupreply{} = radgroupreply) do

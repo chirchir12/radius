@@ -25,7 +25,7 @@ defmodule Radius.Policy.Hotspot do
         changes =
           case {policy.__struct__, policy.attribute} do
             {Radgroupreply, "Mikrotik-Rate-Limit"} ->
-              %{value: "#{attrs.upload}/M#{attrs.download}/M"}
+              %{value: "#{attrs.upload}M/#{attrs.download}M"}
 
             {Radgroupreply, "Session-Timeout"} ->
               %{value: attrs.duration}
@@ -34,7 +34,7 @@ defmodule Radius.Policy.Hotspot do
               %{value: attrs.duration}
 
             {Radgroupcheck, "Mikrotik-Rate-Limit"} ->
-              %{value: "#{attrs.upload}/M#{attrs.download}/M"}
+              %{value: "#{attrs.upload}M/#{attrs.download}M"}
 
             _ ->
               %{}
@@ -76,7 +76,7 @@ defmodule Radius.Policy.Hotspot do
       groupname: attrs.plan,
       attribute: "Mikrotik-Rate-Limit",
       op: ":=",
-      value: "#{attrs.upload}/M#{attrs.download}/M",
+      value: "#{attrs.upload}M/#{attrs.download}M",
       plan: attrs.plan
     }
 
@@ -112,7 +112,7 @@ defmodule Radius.Policy.Hotspot do
       groupname: attrs.plan,
       attribute: "Mikrotik-Rate-Limit",
       op: ":=",
-      value: "#{attrs.upload}/M#{attrs.download}/M"
+      value: "#{attrs.upload}M/#{attrs.download}M"
     }
 
     session_timeout = %{

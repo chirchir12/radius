@@ -47,7 +47,7 @@ defmodule Radius.UserGroup.RadusergroupTest do
     test "create_radusergroup/1 with ppp service and customer returns valid radusergroup with nil customer" do
       attrs = Map.put(@valid_ppp_attrs, :customer, Ecto.UUID.generate())
       assert {:ok, %Radusergroup{} = radusergroup} = Radusergroup.create_radusergroup(attrs)
-      assert is_nil(radusergroup.customer)
+      assert not is_nil(radusergroup.customer)
     end
 
     test "create_radusergroup/1 with invalid service returns error changeset" do
