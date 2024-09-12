@@ -8,7 +8,8 @@ defmodule Radius.Auth.Hotspot do
             customer: nil,
             service: "hotspot",
             expire_on: nil,
-            plan: nil
+            plan: nil,
+            priority: 0
 
   def login(%__MODULE__{} = attrs) do
     check = %{
@@ -25,7 +26,8 @@ defmodule Radius.Auth.Hotspot do
       username: attrs.username,
       groupname: attrs.plan,
       customer: attrs.customer,
-      service: "hotspot"
+      service: "hotspot",
+      priority: attrs.priority
     }
 
     case Repo.transaction(fn ->
