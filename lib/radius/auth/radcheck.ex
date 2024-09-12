@@ -44,6 +44,7 @@ defmodule Radius.Auth.Radcheck do
     case get_field(changeset, :service) do
       "hotspot" ->
         validate_required(changeset, [:customer])
+
       "ppp" ->
         changeset
 

@@ -10,7 +10,7 @@ defmodule Radius.Auth.PpoeTest do
       attrs = %Ppoe{
         username: "testuser",
         password: "testpass",
-        customer:  Ecto.UUID.generate(),
+        customer: Ecto.UUID.generate(),
         service: "ppp",
         expire_on: ~N[2023-12-31 23:59:59],
         profile: "testprofile"

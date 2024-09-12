@@ -1,6 +1,8 @@
 defmodule Radius.Group.Radgroupcheck do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Radius.Repo
+  import Ecto.Query, warn: false
 
   schema "radgroupcheck" do
     field :groupname, :string
@@ -8,6 +10,17 @@ defmodule Radius.Group.Radgroupcheck do
     field :op, :string
     field :value, :string
     field :plan, Ecto.UUID
+  end
+
+  def update_radgroupcheck(%__MODULE__{} = radgroupcheck, attrs) do
+    radgroupcheck
+    |> changeset(attrs)
+    |> Repo.update()
+  end
+
+  def get_by(plan) do
+    query = from(r in __MODULE__, where: r.plan == ^plan)
+    {:ok, Repo.all(query)}
   end
 
   def changeset(radgroupcheck, attrs) do
