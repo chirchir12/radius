@@ -52,7 +52,14 @@ defmodule Radius.Auth.Ppoe do
 
   def logout(customer) do
     query = from(r in Radcheck, where: r.customer == ^customer)
-    Repo.delete_all(query)
+    case Repo.delete_all(query) do
+      {0, nil} ->
+        {:error, :not_found}
+      {count, nil} when is_integer(count) and count > 0 ->
+        {:ok, :ok}
+      {_, _} ->
+        {:error, :delete_failed}
+    end
   end
 
   defp remove_service(attrs) do

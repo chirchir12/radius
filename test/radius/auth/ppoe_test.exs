@@ -92,7 +92,7 @@ defmodule Radius.Auth.PpoeTest do
       assert Repo.aggregate(Radcheck, :count, :id) == 4
 
       # Perform logout
-      assert {4, nil} = Ppoe.logout(customer)
+      assert {:ok, :ok} = Ppoe.logout(customer)
 
       # Verify all entries for the customer are removed
       assert Repo.aggregate(Radcheck, :count, :id) == 0
@@ -125,7 +125,7 @@ defmodule Radius.Auth.PpoeTest do
       assert Repo.aggregate(Radcheck, :count, :id) == 2
 
       # Perform logout for customer1
-      assert {1, nil} = Ppoe.logout(user1_customer)
+      assert {:ok, :ok} = Ppoe.logout(user1_customer)
 
       # Verify only customer1's entry is removed
       assert Repo.aggregate(Radcheck, :count, :id) == 1
