@@ -28,10 +28,10 @@ defmodule Radius.Policy.Hotspot do
               %{value: "#{attrs.upload}M/#{attrs.download}M"}
 
             {Radgroupreply, "Session-Timeout"} ->
-              %{value: attrs.duration}
+              %{value: "#{attrs.duration}"}
 
             {Radgroupcheck, "Session-Timeout"} ->
-              %{value: attrs.duration}
+              %{value: "#{attrs.duration}"}
 
             {Radgroupcheck, "Mikrotik-Rate-Limit"} ->
               %{value: "#{attrs.upload}M/#{attrs.download}M"}
@@ -84,7 +84,7 @@ defmodule Radius.Policy.Hotspot do
       groupname: attrs.plan,
       attribute: "Session-Timeout",
       op: ":=",
-      value: attrs.duration,
+      value: "#{attrs.duration}",
       plan: attrs.plan
     }
 
@@ -119,7 +119,7 @@ defmodule Radius.Policy.Hotspot do
       groupname: attrs.plan,
       attribute: "Session-Timeout",
       op: ":=",
-      value: attrs.duration
+      value: "#{attrs.duration}"
     }
 
     bandwidth = Radgroupreply.changeset(%Radgroupreply{}, bandwidth)

@@ -11,8 +11,9 @@ defmodule Radius.Auth do
       service: "hotspot",
       expire_on: attrs.expire_on,
       plan: attrs.plan,
-      priority: attrs.priority,
+      priority: attrs.priority
     }
+
     Hotspot.login(data)
   end
 
@@ -23,8 +24,9 @@ defmodule Radius.Auth do
       customer: attrs.customer,
       service: "ppp",
       expire_on: attrs.expire_on,
-      profile: attrs.profile,
+      profile: attrs.profile
     }
+
     Ppoe.login(data)
   end
 

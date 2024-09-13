@@ -14,6 +14,7 @@ defmodule Radius.AuthTest do
         plan: Ecto.UUID.generate(),
         priority: 1
       }
+
       assert {:ok, :ok} = Auth.login(:hotspot, attrs)
       assert Repo.get_by(Radcheck, username: "test_user") != nil
       assert Repo.get_by(Radcheck, username: "test_user").customer == attrs.customer
@@ -42,6 +43,7 @@ defmodule Radius.AuthTest do
         plan: Ecto.UUID.generate(),
         priority: 1
       }
+
       {:ok, :ok} = Auth.login(:hotspot, attrs)
 
       assert {:ok, :ok} = Auth.logout(:hotspot, attrs.customer)
@@ -56,6 +58,7 @@ defmodule Radius.AuthTest do
         expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
         profile: "default"
       }
+
       {:ok, :ok} = Auth.login(:ppp, attrs)
 
       assert {:ok, :ok} = Auth.logout(:ppp, attrs.customer)
@@ -73,6 +76,7 @@ defmodule Radius.AuthTest do
         plan: Ecto.UUID.generate(),
         priority: 1
       }
+
       {:ok, :ok} = Auth.login(:hotspot, expired_attrs)
 
       valid_attrs = %{
@@ -83,6 +87,7 @@ defmodule Radius.AuthTest do
         plan: Ecto.UUID.generate(),
         priority: 1
       }
+
       {:ok, :ok} = Auth.login(:hotspot, valid_attrs)
 
       Auth.clear_session()

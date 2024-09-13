@@ -16,6 +16,7 @@ defmodule Radius.Policy.PpoeTest do
       duration: 3600,
       priority: 1
     }
+
     {:ok, policy: policy}
   end
 
@@ -46,8 +47,17 @@ defmodule Radius.Policy.PpoeTest do
       assert {:ok, :ok} = Ppoe.update_policies(updated_policy)
 
       # Verify updates
-      assert Repo.get_by(Radgroupreply, groupname: policy.plan, attribute: "Mikrotik-Rate-Limit", value: "20/M10/M")
-      assert Repo.get_by(Radgroupreply, groupname: policy.plan, attribute: "Session-Timeout", value: "7200")
+      assert Repo.get_by(Radgroupreply,
+               groupname: policy.plan,
+               attribute: "Mikrotik-Rate-Limit",
+               value: "20M/10M"
+             )
+
+      assert Repo.get_by(Radgroupreply,
+               groupname: policy.plan,
+               attribute: "Session-Timeout",
+               value: "7200"
+             )
     end
   end
 

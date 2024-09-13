@@ -33,7 +33,9 @@ defmodule Radius.Policy.Ppoe do
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, _} -> {:ok, :ok}
+      {:ok, _} ->
+        {:ok, :ok}
+
       {:error, failed_operation, failed_value, _changes_so_far} ->
         {:error, {failed_operation, failed_value}}
     end
@@ -125,7 +127,9 @@ defmodule Radius.Policy.Ppoe do
   # Helper functions for each update operation
   defp update_group_check_policy(repo, %{plan: plan, profile: profile}) do
     from(c in Radgroupcheck, where: c.plan == ^plan)
-    |> repo.update_all(set: [groupname: profile, attribute: "Framed-Protocol", op: "==", value: "PPP"])
+    |> repo.update_all(
+      set: [groupname: profile, attribute: "Framed-Protocol", op: "==", value: "PPP"]
+    )
     |> case do
       {n, nil} when is_integer(n) -> {:ok, n}
       _ -> {:error, "Failed to update group check policy"}
@@ -141,17 +145,31 @@ defmodule Radius.Policy.Ppoe do
     end
   end
 
-  defp update_group_reply_policy(repo, %{plan: plan, upload: upload, download: download, duration: duration, pool: pool}) do
+  defp update_group_reply_policy(repo, %{
+         plan: plan,
+         upload: upload,
+         download: download,
+         duration: duration,
+         pool: pool
+       }) do
     updates = [
-      {Radgroupreply, [groupname: plan, attribute: "Mikrotik-Rate-Limit", op: "=", value: "#{upload}/M#{download}/M"]},
-      {Radgroupreply, [groupname: plan, attribute: "Session-Timeout", op: "=", value: "#{duration}"]},
+      {Radgroupreply,
+       [
+         groupname: plan,
+         attribute: "Mikrotik-Rate-Limit",
+         op: "=",
+         value: "#{upload}M/#{download}M"
+       ]},
+      {Radgroupreply,
+       [groupname: plan, attribute: "Session-Timeout", op: "=", value: "#{duration}"]},
       {Radgroupreply, [groupname: plan, attribute: "Framed-Pool", op: "=", value: pool]}
     ]
 
-    results = Enum.map(updates, fn {schema, set_attrs} ->
-      from(r in schema, where: r.groupname == ^plan and r.attribute == ^set_attrs[:attribute])
-      |> repo.update_all(set: set_attrs)
-    end)
+    results =
+      Enum.map(updates, fn {schema, set_attrs} ->
+        from(r in schema, where: r.groupname == ^plan and r.attribute == ^set_attrs[:attribute])
+        |> repo.update_all(set: set_attrs)
+      end)
 
     if Enum.all?(results, fn {n, nil} -> is_integer(n) end) do
       {:ok, Enum.sum(Enum.map(results, fn {n, _} -> n end))}
