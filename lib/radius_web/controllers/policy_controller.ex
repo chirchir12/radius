@@ -6,7 +6,7 @@ defmodule RadiusWeb.PolicyController do
   action_fallback RadiusWeb.FallbackController
 
   # Hotspot actions
-  def create_hotspot(conn, %{"hotspot" => params}) do
+  def create_hotspot(conn, %{"policy" => params}) do
     with {:ok, :ok} <- Policies.add(:hotspot, params) do
       conn
       |> put_status(:created)
@@ -14,7 +14,7 @@ defmodule RadiusWeb.PolicyController do
     end
   end
 
-  def update_hotspot(conn, %{"plan" => plan, "hotspot" => params}) do
+  def update_hotspot(conn, %{"plan" => plan, "policy" => params}) do
     params = Map.put(params, "plan", plan)
 
     with {:ok, :ok} <- Policies.update(:hotspot, params) do
@@ -29,13 +29,15 @@ defmodule RadiusWeb.PolicyController do
   end
 
   # PPPoE actions
-  def create_ppoe(conn, %{"ppp" => params}) do
+  def create_ppoe(conn, %{"policy" => params}) do
     with {:ok, :ok} <- Policies.add(:ppp, params) do
       render(conn, "show_ppp.json", ppp: %{status: :ok})
     end
   end
 
-  def update_ppoe(conn, %{"ppp" => params}) do
+  def update_ppoe(conn, %{"plan" => plan, "policy" => params}) do
+    params = Map.put(params, "plan", plan)
+
     with {:ok, :ok} <- Policies.update(:ppp, params) do
       render(conn, "show_ppp.json", ppp: %{status: :ok})
     end

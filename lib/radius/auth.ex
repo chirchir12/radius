@@ -47,7 +47,7 @@ defmodule Radius.Auth do
             service: "hotspot",
             expire_on: changes.expire_on,
             plan: changes.plan,
-            priority: changes.priority
+            priority: Map.get(changes, :priority, 10)
         }
 
         {:ok, data}

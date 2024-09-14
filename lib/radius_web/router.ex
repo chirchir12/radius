@@ -8,15 +8,26 @@ defmodule RadiusWeb.Router do
   scope "/v1/api", RadiusWeb do
     pipe_through :api
 
-    # Hotspot routes
+    # Hotspot Policy routes
     post "/policies/hotspot", PolicyController, :create_hotspot
     put "/policies/hotspot/:plan", PolicyController, :update_hotspot
     delete "/policies/hotspot/:plan", PolicyController, :delete_hotspot
 
-    # PPPoE routes
+    # Hotspot auth routes
+    post "/auth/hotspot/login", AuthController, :hotspot_login
+    post "/auth/hotspot/logout/:customer", AuthController, :hotspot_logout
+
+    # PPPoE Policy routes
     post "/policies/ppoe", PolicyController, :create_ppoe
     put "/policies/ppoe/:plan", PolicyController, :update_ppoe
     delete "/policies/ppoe/:plan", PolicyController, :delete_ppoe
+
+    # PPPoE Auth routes
+    post "/auth/ppoe/login", AuthController, :ppp_login
+    post "/auth/ppoe/logout/:customer", AuthController, :ppp_logout
+
+    # Clear session
+    post "/auth/session/clear", AuthController, :clear_session
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

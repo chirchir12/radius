@@ -2,6 +2,7 @@ defmodule Radius.Auth.Hotspot do
   alias Radius.Repo
   alias Radius.Auth.Radcheck
   alias Radius.UserGroup.Radusergroup
+  import Ecto.Query
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -56,14 +57,28 @@ defmodule Radius.Auth.Hotspot do
   end
 
   def logout(customer) do
-    case Repo.transaction(fn ->
-           with {:ok, %Radcheck{} = check_session} <- Radcheck.get_by(customer),
-                {:ok, %Radcheck{}} <- Radcheck.delete_radcheck(check_session),
-                {:ok, %Radusergroup{} = group_session} <- Radusergroup.get_by(customer),
-                {:ok, %Radusergroup{}} <- Radusergroup.delete_radusergroup(group_session) do
-             :ok
-           end
-         end) do
+    radcheck_query = from(r in Radcheck, where: r.customer == ^customer)
+    radusergroup_query = from(r in Radusergroup, where: r.customer == ^customer)
+
+    Repo.transaction(fn ->
+      delete_records(radcheck_query, radusergroup_query)
+    end)
+    |> handle_transaction_result()
+  end
+
+  defp delete_records(radcheck_query, radusergroup_query) do
+    {deleted_radcheck, _} = Repo.delete_all(radcheck_query)
+    {deleted_radusergroup, _} = Repo.delete_all(radusergroup_query)
+
+    if deleted_radcheck > 0 and deleted_radusergroup > 0 do
+      :ok
+    else
+      {:error, :customer_session_not_found}
+    end
+  end
+
+  defp handle_transaction_result(transaction_result) do
+    case transaction_result do
       {:ok, :ok} -> {:ok, :ok}
       {:ok, {:error, reason}} -> {:error, reason}
       {:error, reason} -> {:error, reason}
