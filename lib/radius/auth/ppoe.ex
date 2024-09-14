@@ -3,12 +3,24 @@ defmodule Radius.Auth.Ppoe do
   import Ecto.Query, warn: false
   alias Radius.Auth.Radcheck
 
-  defstruct username: nil,
-            password: nil,
-            customer: nil,
-            service: "ppp",
-            expire_on: nil,
-            profile: nil
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :username, :string
+    field :password, :string
+    field :customer, :string
+    field :service, :string, default: "ppp"
+    field :expire_on, :naive_datetime
+    field :profile, :string
+  end
+
+  def changeset(ppoe, attrs) do
+    ppoe
+    |> cast(attrs, [:username, :password, :customer, :service, :expire_on, :profile])
+    |> validate_required([:username, :password, :customer, :expire_on, :profile])
+    |> validate_inclusion(:service, ["ppp"])
+  end
 
   def login(%__MODULE__{} = attrs) do
     credentials = %{

@@ -3,13 +3,26 @@ defmodule Radius.Auth.Hotspot do
   alias Radius.Auth.Radcheck
   alias Radius.UserGroup.Radusergroup
 
-  defstruct username: nil,
-            password: nil,
-            customer: nil,
-            service: "hotspot",
-            expire_on: nil,
-            plan: nil,
-            priority: 0
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :username, :string
+    field :password, :string
+    field :customer, :string
+    field :service, :string, default: "hotspot"
+    field :expire_on, :naive_datetime
+    field :plan, :string
+    field :priority, :integer, default: 0
+  end
+
+  def changeset(hotspot, attrs) do
+    hotspot
+    |> cast(attrs, [:username, :password, :customer, :service, :expire_on, :plan, :priority])
+    |> validate_required([:username, :password, :customer, :expire_on, :plan])
+    |> validate_inclusion(:service, ["hotspot"])
+    |> validate_number(:priority, greater_than_or_equal_to: 0)
+  end
 
   def login(%__MODULE__{} = attrs) do
     check = %{

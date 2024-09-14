@@ -31,7 +31,6 @@ defmodule Radius.Policy.Hotspot do
     end
   end
 
-
   def update_policies(%__MODULE__{} = attrs) do
     replies = Repo.all(from r in Radgroupreply, where: r.groupname == ^attrs.plan)
     checks = Repo.all(from c in Radgroupcheck, where: c.groupname == ^attrs.plan)

@@ -20,6 +20,19 @@ defmodule Radius.AuthTest do
       assert Repo.get_by(Radcheck, username: "test_user").customer == attrs.customer
     end
 
+    test "login/2 with :hotspot throws error for invalid attributes" do
+      invalid_attrs = %{
+        username: nil,
+        password: nil,
+        customer: nil,
+        expire_on: nil,
+        plan: nil,
+        priority: 1
+      }
+
+      assert {:error, %Ecto.Changeset{valid?: false}} = Auth.login(:hotspot, invalid_attrs)
+    end
+
     test "login/2 with :ppp creates a new ppp session" do
       attrs = %{
         username: "test_user",
@@ -31,6 +44,19 @@ defmodule Radius.AuthTest do
 
       assert {:ok, :ok} = Auth.login(:ppp, attrs)
     end
+  end
+
+  test "login/2 with :ppp throws error for invalid attributes" do
+    invalid_attrs = %{
+      username: nil,
+      password: nil,
+      customer: nil,
+      expire_on: nil,
+      plan: nil,
+      priority: 1
+    }
+
+    assert {:error, %Ecto.Changeset{valid?: false}} = Auth.login(:ppp, invalid_attrs)
   end
 
   describe "logout/2" do
