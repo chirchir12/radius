@@ -4,7 +4,22 @@ defmodule Radius.Policy.Hotspot do
   alias Ecto.Multi
   import Ecto.Query
 
-  defstruct plan: nil, upload: nil, download: nil, duration: nil
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :plan, Ecto.UUID
+    field :upload, :integer
+    field :download, :integer
+    # duration in seconds
+    field :duration, :integer
+  end
+
+  def changeset(hotspot, attrs) do
+    hotspot
+    |> cast(attrs, [:plan, :upload, :download, :duration])
+    |> validate_required([:plan, :upload, :download, :duration])
+  end
 
   def add_policies(%__MODULE__{} = attrs) do
     with {:ok, :ok} <- add_group_check_policy(attrs),
@@ -14,6 +29,16 @@ defmodule Radius.Policy.Hotspot do
       {:error, errors} ->
         {:error, errors}
     end
+  end
+
+  def get_policies(plan) do
+    query =
+      from(r in Radgroupreply,
+        where: r.groupname == ^plan,
+        select: [:value]
+      )
+
+    {:ok, Repo.all(query)}
   end
 
   def update_policies(%__MODULE__{} = attrs) do
