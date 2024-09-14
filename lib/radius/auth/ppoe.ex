@@ -67,7 +67,7 @@ defmodule Radius.Auth.Ppoe do
 
     case Repo.delete_all(query) do
       {0, nil} ->
-        {:error, :not_found}
+        {:error, :customer_session_not_found}
 
       {count, nil} when is_integer(count) and count > 0 ->
         {:ok, :ok}
