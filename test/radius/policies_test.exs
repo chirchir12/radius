@@ -29,7 +29,7 @@ defmodule Radius.PoliciesTest do
 
     test "delete/2 deletes a hotspot policy" do
       {:ok, :ok} = Policies.add(:hotspot, @valid_attrs)
-      assert {:ok, :ok} = Policies.delete(:hotspot, %{plan: @valid_attrs.plan})
+      assert {:ok, :ok} = Policies.delete(:hotspot, @valid_attrs.plan)
     end
   end
 
@@ -57,7 +57,7 @@ defmodule Radius.PoliciesTest do
 
     test "delete/2 deletes a ppp policy" do
       {:ok, :ok} = Policies.add(:ppp, @valid_attrs)
-      assert {:ok, :ok} = Policies.delete(:ppp, %{plan: @valid_attrs.plan})
+      assert {:ok, :ok} = Policies.delete(:ppp, @valid_attrs.plan)
     end
   end
 end

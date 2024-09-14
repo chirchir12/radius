@@ -26,12 +26,12 @@ defmodule Radius.Policies do
     Ppoe.update_policies(data)
   end
 
-  def delete(:hotspot, attrs) do
-    Hotspot.delete_policies(attrs.plan)
+  def delete(:hotspot, plan) do
+    Hotspot.delete_policies(plan)
   end
 
-  def delete(:ppp, attrs) do
-    Ppoe.delete_policies(attrs.plan)
+  def delete(:ppp, plan) do
+    Ppoe.delete_policies(plan)
   end
 
   defp hotspot_policy(attrs) do
@@ -76,7 +76,7 @@ defmodule Radius.Policies do
       [] ->
         false
 
-      [_|_] ->
+      [_ | _] ->
         true
     end
   end
