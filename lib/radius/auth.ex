@@ -38,10 +38,20 @@ defmodule Radius.Auth do
     end
   end
 
-  def clear_session() do
+  def expired_sessions() do
     now = DateTime.utc_now()
-    query = from(r in Radcheck, where: r.expire_on < ^now)
-    Repo.delete_all(query)
+    from(r in Radcheck, where: r.expire_on < ^now)
+  end
+
+  def get_expired_sessions() do
+    data  = expired_sessions()
+    |> Repo.all()
+    {:ok, data}
+  end
+
+  def clear_session() do
+    expired_sessions()
+    |>Repo.delete_all()
   end
 
   defp validate_login(%Hotspot{} = hotspot, attrs) do
