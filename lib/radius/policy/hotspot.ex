@@ -31,15 +31,6 @@ defmodule Radius.Policy.Hotspot do
     end
   end
 
-  def get_policies(plan) do
-    query =
-      from(r in Radgroupreply,
-        where: r.groupname == ^plan,
-        select: [:value]
-      )
-
-    {:ok, Repo.all(query)}
-  end
 
   def update_policies(%__MODULE__{} = attrs) do
     replies = Repo.all(from r in Radgroupreply, where: r.groupname == ^attrs.plan)

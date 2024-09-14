@@ -4,13 +4,28 @@ defmodule Radius.Policy.Ppoe do
   alias Radius.Repo
   import Ecto.Query
 
-  defstruct pool: nil,
-            plan: nil,
-            profile: nil,
-            upload: nil,
-            download: nil,
-            duration: nil,
-            priority: 0
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :pool, :string
+    field :plan, Ecto.UUID
+    field :profile, :string
+    field :upload, :integer
+    field :download, :integer
+    field :duration, :integer
+    field :priority, :integer, default: 0
+  end
+
+  def changeset(ppoe, attrs) do
+    ppoe
+    |> cast(attrs, [:pool, :plan, :profile, :upload, :download, :duration, :priority])
+    |> validate_required([:pool, :plan, :profile, :upload, :download, :duration])
+    |> validate_number(:upload, greater_than: 0)
+    |> validate_number(:download, greater_than: 0)
+    |> validate_number(:duration, greater_than: 0)
+    |> validate_number(:priority, greater_than_or_equal_to: 0)
+  end
 
   def add_policies(%__MODULE__{} = attrs) do
     with {:ok, _} <- add_group_check_policy(attrs),
