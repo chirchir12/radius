@@ -4,13 +4,15 @@ defmodule Radius.Auth do
   alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
 
   def login(:hotspot, attrs) do
-    with {:ok, data} <- validate_login(%Hotspot{}, attrs) do
+    with {:ok, data} <- validate_login(%Hotspot{}, attrs),
+         :ok <- check_session_exists(data.customer) do
       Hotspot.login(data)
     end
   end
 
   def login(:ppp, attrs) do
-    with {:ok, data} <- validate_login(%Ppoe{}, attrs) do
+    with {:ok, data} <- validate_login(%Ppoe{}, attrs),
+         :ok <- check_session_exists(data.customer) do
       Ppoe.login(data)
     end
   end
@@ -76,5 +78,20 @@ defmodule Radius.Auth do
 
         {:ok, data}
     end
+  end
+
+  defp check_session_exists(customer) do
+    case sessions(customer) do
+      {:ok, []} ->
+        :ok
+
+      {:ok, [_ | _]} ->
+        {:error, :session_exists}
+    end
+  end
+
+  defp sessions(customer) do
+    query = from(r in Radcheck, where: r.customer == ^customer)
+    {:ok, Repo.all(query)}
   end
 end
