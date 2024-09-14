@@ -20,6 +20,26 @@ defmodule Radius.AuthTest do
       assert Repo.get_by(Radcheck, username: "test_user").customer == attrs.customer
     end
 
+    test "login/2 with :hotspot returns error when session already exists" do
+      attrs = %{
+        username: "existing_user",
+        password: "password123",
+        customer: Ecto.UUID.generate(),
+        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        plan: Ecto.UUID.generate(),
+        priority: 1
+      }
+
+      # Create the initial session
+      assert {:ok, :ok} = Auth.login(:hotspot, attrs)
+
+      # Attempt to create a session with the same username
+      assert {:error, :session_exists} = Auth.login(:hotspot, attrs)
+
+      # Verify that only one session exists
+      assert Repo.aggregate(Radcheck, :count, :id) == 1
+    end
+
     test "login/2 with :hotspot throws error for invalid attributes" do
       invalid_attrs = %{
         username: nil,
@@ -44,6 +64,27 @@ defmodule Radius.AuthTest do
 
       assert {:ok, :ok} = Auth.login(:ppp, attrs)
     end
+  end
+
+  test "login/2 with :ppp returns error when session already exists" do
+    attrs = %{
+      username: "existing_user",
+      password: "password123",
+      customer: Ecto.UUID.generate(),
+      expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+      plan: Ecto.UUID.generate(),
+      priority: 1,
+      profile: "default"
+    }
+
+    # Create the initial session
+    assert {:ok, :ok} = Auth.login(:ppp, attrs)
+
+    # Attempt to create a session with the same username
+    assert {:error, :session_exists} = Auth.login(:ppp, attrs)
+
+    # Verify that only one session exists
+    assert Repo.aggregate(Radcheck, :count, :id) == 2
   end
 
   test "login/2 with :ppp throws error for invalid attributes" do
