@@ -37,6 +37,14 @@ defmodule RadiusWeb.AuthController do
     end
   end
 
+  def extend_session(conn, %{"auth" => params}) do
+    with {:ok, :ok} <- Auth.extend_session(params) do
+      conn
+      |> put_status(:ok)
+      |> json(%{status: :ok})
+    end
+  end
+
   def clear_session(conn, _params) do
     Auth.clear_session()
 

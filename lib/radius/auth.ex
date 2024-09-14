@@ -25,6 +25,19 @@ defmodule Radius.Auth do
     Ppoe.logout(customer)
   end
 
+  def extend_session(attrs) do
+    changeset = Hotspot.extend_session_changeset(%Hotspot{}, attrs)
+
+    case changeset.valid? do
+      false ->
+        {:error, changeset}
+
+      true ->
+        changes = changeset.changes
+        Hotspot.extend_expiration(changes.customer, changes.expire_on)
+    end
+  end
+
   def clear_session() do
     now = DateTime.utc_now()
     query = from(r in Radcheck, where: r.expire_on < ^now)

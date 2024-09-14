@@ -27,6 +27,7 @@ defmodule RadiusWeb.Router do
     post "/auth/ppoe/logout/:customer", AuthController, :ppp_logout
 
     # Clear session
+    post "/auth/session/extend", AuthController, :extend_session
     post "/auth/session/clear", AuthController, :clear_session
   end
 
