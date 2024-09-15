@@ -28,7 +28,7 @@ defmodule RadiusWeb.Router do
 
     # Clear session
     post "/auth/session/extend", AuthController, :extend_session
-    post "/auth/session/clear", AuthController, :clear_session
+    # post "/auth/session/clear", AuthController, :clear_session
 
     # NAS routes
     get "/nas", NasController, :index

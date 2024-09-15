@@ -45,11 +45,11 @@ defmodule RadiusWeb.AuthController do
     end
   end
 
-  def clear_session(conn, _params) do
-    Auth.clear_session()
+  # def clear_session(conn, _params) do
+  #   Auth.clear_session()
 
-    conn
-    |> put_status(:ok)
-    |> json(%{status: :ok})
-  end
+  #   conn
+  #   |> put_status(:ok)
+  #   |> json(%{status: :ok})
+  # end
 end
