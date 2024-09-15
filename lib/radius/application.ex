@@ -10,6 +10,7 @@ defmodule Radius.Application do
     children = [
       RadiusWeb.Telemetry,
       Radius.Repo,
+      {Oban, Application.fetch_env!(:radius, Oban)},
       {DNSCluster, query: Application.get_env(:radius, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Radius.PubSub},
       # Start the Finch HTTP client for sending emails
