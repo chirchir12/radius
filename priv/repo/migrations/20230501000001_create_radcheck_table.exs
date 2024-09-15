@@ -9,6 +9,7 @@ defmodule Radius.Repo.Migrations.CreateRadcheckTable do
       add :value, :string, null: false
       add :customer, :uuid
       add :expire_on, :utc_datetime, null: false
+      add :service, :string, null: false
     end
 
     create index(:radcheck, [:username])

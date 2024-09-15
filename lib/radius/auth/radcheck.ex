@@ -9,7 +9,7 @@ defmodule Radius.Auth.Radcheck do
     field :op, :string
     field :value, :string
     field :customer, Ecto.UUID
-    field :service, :string, virtual: true
+    field :service, :string
     field :expire_on, :utc_datetime
   end
 

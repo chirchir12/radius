@@ -47,8 +47,8 @@ defmodule Radius.Auth.Ppoe do
     prof_changeset = Radcheck.changeset(%Radcheck{}, profile)
 
     if cred_changeset.valid? and prof_changeset.valid? do
-      valid_credentials = cred_changeset.changes |> remove_service()
-      valid_profile = prof_changeset.changes |> remove_service()
+      valid_credentials = cred_changeset.changes
+      valid_profile = prof_changeset.changes
 
       case Repo.insert_all(Radcheck, [valid_credentials, valid_profile]) do
         {2, nil} ->
@@ -75,9 +75,5 @@ defmodule Radius.Auth.Ppoe do
       {_, _} ->
         {:error, :delete_failed}
     end
-  end
-
-  defp remove_service(attrs) do
-    Map.delete(attrs, :service)
   end
 end

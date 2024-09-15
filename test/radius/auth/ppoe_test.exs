@@ -61,7 +61,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "pass1",
           customer: customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         },
         %{
           username: "user1",
@@ -69,7 +70,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "profile1",
           customer: customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         },
         %{
           username: "user2",
@@ -77,7 +79,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "pass2",
           customer: customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         },
         %{
           username: "user2",
@@ -85,7 +88,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "profile2",
           customer: customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         }
       ])
 
@@ -110,7 +114,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "pass1",
           customer: user1_customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         },
         %{
           username: "user2",
@@ -118,7 +123,8 @@ defmodule Radius.Auth.PpoeTest do
           op: ":=",
           value: "pass2",
           customer: user2_customer,
-          expire_on: ~U[2023-12-31 23:59:59Z]
+          expire_on: ~U[2023-12-31 23:59:59Z],
+          service: "ppp"
         }
       ])
 
