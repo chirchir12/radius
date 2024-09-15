@@ -44,14 +44,16 @@ defmodule Radius.Auth do
   end
 
   def get_expired_sessions() do
-    data  = expired_sessions()
-    |> Repo.all()
+    data =
+      expired_sessions()
+      |> Repo.all()
+
     {:ok, data}
   end
 
   def clear_session() do
     expired_sessions()
-    |>Repo.delete_all()
+    |> Repo.delete_all()
   end
 
   defp validate_login(%Hotspot{} = hotspot, attrs) do

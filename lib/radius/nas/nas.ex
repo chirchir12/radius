@@ -2,6 +2,20 @@ defmodule Radius.Nas.Router do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :nasname,
+             :shortname,
+             :type,
+             :ports,
+             :secret,
+             :server,
+             :community,
+             :description,
+             :companyid,
+             :uid
+           ]}
   schema "nas" do
     field :nasname, :string
     field :shortname, :string
@@ -12,6 +26,7 @@ defmodule Radius.Nas.Router do
     field :community, :string
     field :description, :string
     field :companyid, :integer, default: nil
+    field :uid, Ecto.UUID
   end
 
   def changeset(nas, attrs) do
@@ -25,8 +40,17 @@ defmodule Radius.Nas.Router do
       :server,
       :community,
       :description,
-      :companyid
+      :companyid,
+      :uid
     ])
     |> validate_required([:nasname, :shortname, :type, :secret, :companyid])
+    |> generate_uuid()
+  end
+
+  defp generate_uuid(changeset) do
+    case get_field(changeset, :uid) do
+      nil -> put_change(changeset, :uid, Ecto.UUID.generate())
+      _ -> changeset
+    end
   end
 end

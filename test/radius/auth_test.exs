@@ -187,7 +187,6 @@ defmodule Radius.AuthTest do
       }
 
       assert {:ok, :ok} = Auth.extend_session(extend_attrs)
-
     end
 
     test "extend_session/1 returns error for non-existent session" do

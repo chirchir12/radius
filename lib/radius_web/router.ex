@@ -29,6 +29,14 @@ defmodule RadiusWeb.Router do
     # Clear session
     post "/auth/session/extend", AuthController, :extend_session
     post "/auth/session/clear", AuthController, :clear_session
+
+    # NAS routes
+    get "/nas", NasController, :index
+    get "/nas/list/:company", NasController, :index
+    post "/nas", NasController, :create
+    get "/nas/:id", NasController, :show
+    put "/nas/:id", NasController, :update
+    delete "/nas/:id", NasController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
