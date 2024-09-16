@@ -44,9 +44,9 @@ defmodule Radius.Auth.RadcheckTest do
 
     test "changeset/2 validates service field" do
       changeset = Radcheck.changeset(%Radcheck{}, Map.put(@valid_attrs, :service, "invalid"))
-      assert %{service: ["must be either 'ppp' or 'hotspot'"]} = errors_on(changeset)
+      assert %{service: ["must be either 'ppoe' or 'hotspot'"]} = errors_on(changeset)
 
-      changeset = Radcheck.changeset(%Radcheck{}, Map.put(@valid_attrs, :service, "ppp"))
+      changeset = Radcheck.changeset(%Radcheck{}, Map.put(@valid_attrs, :service, "ppoe"))
       assert changeset.valid?
       assert get_change(changeset, :customer) == @valid_attrs.customer
 

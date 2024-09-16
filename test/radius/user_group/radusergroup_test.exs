@@ -10,7 +10,7 @@ defmodule Radius.UserGroup.RadusergroupTest do
       service: "hotspot",
       customer: Ecto.UUID.generate()
     }
-    @valid_ppp_attrs %{username: "pppuser", groupname: "pppgroup", priority: 1, service: "ppp"}
+    @valid_ppoe_attrs %{username: "ppoeuser", groupname: "ppoegroup", priority: 1, service: "ppoe"}
 
     test "create_radusergroup/1 with valid hotspot data creates a radusergroup" do
       assert {:ok, %Radusergroup{} = radusergroup} =
@@ -23,14 +23,14 @@ defmodule Radius.UserGroup.RadusergroupTest do
       assert radusergroup.customer == @valid_attrs.customer
     end
 
-    test "create_radusergroup/1 with valid ppp data creates a radusergroup" do
+    test "create_radusergroup/1 with valid ppoe data creates a radusergroup" do
       assert {:ok, %Radusergroup{} = radusergroup} =
-               Radusergroup.create_radusergroup(@valid_ppp_attrs)
+               Radusergroup.create_radusergroup(@valid_ppoe_attrs)
 
-      assert radusergroup.username == "pppuser"
-      assert radusergroup.groupname == "pppgroup"
+      assert radusergroup.username == "ppoeuser"
+      assert radusergroup.groupname == "ppoegroup"
       assert radusergroup.priority == 1
-      assert radusergroup.service == "ppp"
+      assert radusergroup.service == "ppoe"
       assert is_nil(radusergroup.customer)
     end
 
@@ -44,8 +44,8 @@ defmodule Radius.UserGroup.RadusergroupTest do
       assert "can't be blank" in errors_on(changeset).customer
     end
 
-    test "create_radusergroup/1 with ppp service and customer returns valid radusergroup with nil customer" do
-      attrs = Map.put(@valid_ppp_attrs, :customer, Ecto.UUID.generate())
+    test "create_radusergroup/1 with ppoe service and customer returns valid radusergroup with nil customer" do
+      attrs = Map.put(@valid_ppoe_attrs, :customer, Ecto.UUID.generate())
       assert {:ok, %Radusergroup{} = radusergroup} = Radusergroup.create_radusergroup(attrs)
       assert not is_nil(radusergroup.customer)
     end
@@ -53,7 +53,7 @@ defmodule Radius.UserGroup.RadusergroupTest do
     test "create_radusergroup/1 with invalid service returns error changeset" do
       attrs = Map.put(@valid_attrs, :service, "invalid")
       assert {:error, %Ecto.Changeset{} = changeset} = Radusergroup.create_radusergroup(attrs)
-      assert "must be either 'ppp' or 'hotspot'" in errors_on(changeset).service
+      assert "must be either 'ppoe' or 'hotspot'" in errors_on(changeset).service
     end
 
     test "get_by/1 returns the radusergroup with given customer" do

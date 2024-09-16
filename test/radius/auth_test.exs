@@ -53,7 +53,7 @@ defmodule Radius.AuthTest do
       assert {:error, %Ecto.Changeset{valid?: false}} = Auth.login(:hotspot, invalid_attrs)
     end
 
-    test "login/2 with :ppp creates a new ppp session" do
+    test "login/2 with :ppoe creates a new ppoe session" do
       attrs = %{
         username: "test_user",
         password: "password123",
@@ -62,10 +62,10 @@ defmodule Radius.AuthTest do
         profile: "default"
       }
 
-      assert {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
+      assert {:ok, %Ppoe{}} = Auth.login(:ppoe, attrs)
     end
 
-    test "login/2 with :ppp returns error when session already exists" do
+    test "login/2 with :ppoe returns error when session already exists" do
       attrs = %{
         username: "existing_user",
         password: "password123",
@@ -77,16 +77,16 @@ defmodule Radius.AuthTest do
       }
 
       # Create the initial session
-      assert {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
+      assert {:ok, %Ppoe{}} = Auth.login(:ppoe, attrs)
 
       # Attempt to create a session with the same username
-      assert {:error, :session_exists} = Auth.login(:ppp, attrs)
+      assert {:error, :session_exists} = Auth.login(:ppoe, attrs)
 
       # Verify that only one session exists
       assert Repo.aggregate(Radcheck, :count, :id) == 2
     end
 
-    test "login/2 with :ppp throws error for invalid attributes" do
+    test "login/2 with :ppoe throws error for invalid attributes" do
       invalid_attrs = %{
         username: nil,
         password: nil,
@@ -96,7 +96,7 @@ defmodule Radius.AuthTest do
         priority: 1
       }
 
-      assert {:error, %Ecto.Changeset{valid?: false}} = Auth.login(:ppp, invalid_attrs)
+      assert {:error, %Ecto.Changeset{valid?: false}} = Auth.login(:ppoe, invalid_attrs)
     end
   end
 
@@ -117,7 +117,7 @@ defmodule Radius.AuthTest do
       assert Repo.get_by(Radcheck, username: "test_user") == nil
     end
 
-    test "logout/2 with :ppp removes the ppp session" do
+    test "logout/2 with :ppoe removes the ppoe session" do
       attrs = %{
         username: "test_user",
         password: "password123",
@@ -126,13 +126,12 @@ defmodule Radius.AuthTest do
         profile: "default"
       }
 
-      {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
+      {:ok, %Ppoe{}} = Auth.login(:ppoe, attrs)
 
-      assert {:ok, :ok} = Auth.logout(:ppp, attrs.customer)
+      assert {:ok, :ok} = Auth.logout(:ppoe, attrs.customer)
       assert Repo.get_by(Radcheck, username: "test_user") == nil
     end
   end
-
 
   describe "extend_session/1" do
     test "extend_session/1 successfully extends an existing session" do

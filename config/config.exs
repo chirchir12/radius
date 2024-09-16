@@ -46,10 +46,13 @@ config :radius, Oban,
     {Oban.Plugins.Pruner, max_age: 300},
     {Oban.Plugins.Cron,
      crontab: [
-       {"* * * * *", Radius.Workers.HotspotSessionPruner}
+       {"*/5 * * * *", Radius.Workers.SessionPrunner}
      ]}
   ],
-  queues: [hotspot_sessions: 10, ppoe_sessions: 10],
+  queues: [
+    prune_sessions_per_customer: 10,
+    prune_all_expired_sessions: 10
+  ],
   repo: Radius.Repo
 
 # Import environment specific config. This must remain at the bottom

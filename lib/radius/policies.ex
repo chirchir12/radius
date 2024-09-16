@@ -12,7 +12,7 @@ defmodule Radius.Policies do
     end
   end
 
-  def add(:ppp, attrs) do
+  def add(:ppoe, attrs) do
     with {:ok, %Ppoe{} = data} <- ppoe_policy(attrs),
          :ok <- check_policy_exists(data.plan),
          {:ok, :ok} <- Ppoe.add_policies(data) do
@@ -27,7 +27,7 @@ defmodule Radius.Policies do
     end
   end
 
-  def update(:ppp, attrs) do
+  def update(:ppoe, attrs) do
     with {:ok, %Ppoe{} = data} <- ppoe_policy(attrs),
          {:ok, :ok} <- Ppoe.update_policies(data) do
       {:ok, :ok}
@@ -40,7 +40,7 @@ defmodule Radius.Policies do
     end
   end
 
-  def delete(:ppp, plan) do
+  def delete(:ppoe, plan) do
     with {:ok, :ok} <- Ppoe.delete_policies(plan) do
       {:ok, :ok}
     end

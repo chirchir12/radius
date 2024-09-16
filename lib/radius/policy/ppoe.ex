@@ -89,7 +89,7 @@ defmodule Radius.Policy.Ppoe do
       groupname: attrs.plan,
       plan: attrs.plan,
       priority: attrs.priority,
-      service: "ppp"
+      service: "ppoe"
     }
 
     Radusergroup.changeset(%Radusergroup{}, user_group)

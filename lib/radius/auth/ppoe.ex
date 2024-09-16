@@ -10,7 +10,7 @@ defmodule Radius.Auth.Ppoe do
     field :username, :string
     field :password, :string
     field :customer, :string
-    field :service, :string, default: "ppp"
+    field :service, :string, default: "ppoe"
     field :duration_mins, :integer
     field :expire_on, :naive_datetime
     field :profile, :string
@@ -18,30 +18,38 @@ defmodule Radius.Auth.Ppoe do
 
   def changeset(ppoe, attrs) do
     ppoe
-    |> cast(attrs, [:username, :password, :customer, :service, :duration_mins, :expire_on, :profile])
+    |> cast(attrs, [
+      :username,
+      :password,
+      :customer,
+      :service,
+      :duration_mins,
+      :expire_on,
+      :profile
+    ])
     |> validate_required([:username, :password, :customer, :duration_mins, :profile])
-    |> validate_inclusion(:service, ["ppp"])
+    |> validate_inclusion(:service, ["ppoe"])
   end
 
-  def login(%__MODULE__{} = ppp) do
+  def login(%__MODULE__{} = ppoe) do
     credentials = %{
-      username: ppp.username,
+      username: ppoe.username,
       attribute: "Cleartext-Password",
       op: ":=",
-      value: ppp.password,
-      customer: ppp.customer,
-      service: "ppp",
-      expire_on: ppp.expire_on
+      value: ppoe.password,
+      customer: ppoe.customer,
+      service: "ppoe",
+      expire_on: ppoe.expire_on
     }
 
     profile = %{
-      username: ppp.username,
+      username: ppoe.username,
       attribute: "User-Profile",
       op: ":=",
-      value: ppp.profile,
-      customer: ppp.customer,
-      service: "ppp",
-      expire_on: ppp.expire_on
+      value: ppoe.profile,
+      customer: ppoe.customer,
+      service: "ppoe",
+      expire_on: ppoe.expire_on
     }
 
     cred_changeset = Radcheck.changeset(%Radcheck{}, credentials)
@@ -53,7 +61,7 @@ defmodule Radius.Auth.Ppoe do
 
       case Repo.insert_all(Radcheck, [valid_credentials, valid_profile]) do
         {2, nil} ->
-          {:ok, ppp}
+          {:ok, ppoe}
 
         {_, _errors} ->
           {:error, %{credentials: cred_changeset, profile: prof_changeset}}

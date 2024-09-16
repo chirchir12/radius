@@ -49,14 +49,14 @@ defmodule Radius.UserGroup.Radusergroup do
       "hotspot" ->
         validate_required(changeset, [:customer])
 
-      "ppp" ->
+      "ppoe" ->
         changeset
 
       nil ->
-        add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
+        add_error(changeset, :service, "must be either 'ppoe' or 'hotspot'")
 
       _ ->
-        add_error(changeset, :service, "must be either 'ppp' or 'hotspot'")
+        add_error(changeset, :service, "must be either 'ppoe' or 'hotspot'")
     end
   end
 end

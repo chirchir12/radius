@@ -2,15 +2,19 @@ defmodule Radius.Auth do
   import Ecto.Query, warn: false
   alias Radius.Repo
   alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
+  alias Radius.Workers.HotspotSessionPruner
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
-         :ok <- check_session_exists(data.customer) do
-      Hotspot.login(data)
+         :ok <- check_session_exists(data.customer),
+         {:ok, %Hotspot{} = data} <- Hotspot.login(data) do
+      prun_after = data.duration_mins * 60
+      # HotspotSessionPruner.enqueue(data.customer, prun_after, "hotspot")
+      {:ok, data}
     end
   end
 
-  def login(:ppp, attrs) do
+  def login(:ppoe, attrs) do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
          :ok <- check_session_exists(data.customer) do
       Ppoe.login(data)
@@ -21,7 +25,7 @@ defmodule Radius.Auth do
     Hotspot.logout(customer)
   end
 
-  def logout(:ppp, customer) do
+  def logout(:ppoe, customer) do
     Ppoe.logout(customer)
   end
 
@@ -40,11 +44,9 @@ defmodule Radius.Auth do
     end
   end
 
-
-
-  def get_expired_sessions(:ppp) do
+  def get_expired_sessions(:ppoe) do
     now = DateTime.utc_now()
-    query = from(r in Radcheck, where: r.expire_on < ^now and r.service == "ppp", select: r)
+    query = from(r in Radcheck, where: r.expire_on < ^now and r.service == "ppoe", select: r)
     {:ok, Repo.delete(query)}
   end
 
@@ -93,7 +95,7 @@ defmodule Radius.Auth do
           | username: changes.username,
             password: changes.password,
             customer: changes.customer,
-            service: "ppp",
+            service: "ppoe",
             expire_on: expire_on,
             profile: changes.profile,
             duration_mins: changes.duration_mins

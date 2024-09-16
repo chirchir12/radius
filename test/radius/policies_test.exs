@@ -33,7 +33,7 @@ defmodule Radius.PoliciesTest do
     end
   end
 
-  describe "ppp policies" do
+  describe "ppoe policies" do
     @valid_attrs %{
       plan: Ecto.UUID.generate(),
       upload: 5120,
@@ -44,20 +44,20 @@ defmodule Radius.PoliciesTest do
       profile: "default"
     }
 
-    test "add/2 creates a ppp policy" do
-      assert {:ok, :ok} = Policies.add(:ppp, @valid_attrs)
+    test "add/2 creates a ppoe policy" do
+      assert {:ok, :ok} = Policies.add(:ppoe, @valid_attrs)
     end
 
-    test "update/2 updates a ppp policy" do
-      {:ok, :ok} = Policies.add(:ppp, @valid_attrs)
+    test "update/2 updates a ppoe policy" do
+      {:ok, :ok} = Policies.add(:ppoe, @valid_attrs)
       update_attrs = %{@valid_attrs | upload: 10240, download: 20480, priority: 2}
 
-      assert {:ok, :ok} = Policies.update(:ppp, update_attrs)
+      assert {:ok, :ok} = Policies.update(:ppoe, update_attrs)
     end
 
-    test "delete/2 deletes a ppp policy" do
-      {:ok, :ok} = Policies.add(:ppp, @valid_attrs)
-      assert {:ok, :ok} = Policies.delete(:ppp, @valid_attrs.plan)
+    test "delete/2 deletes a ppoe policy" do
+      {:ok, :ok} = Policies.add(:ppoe, @valid_attrs)
+      assert {:ok, :ok} = Policies.delete(:ppoe, @valid_attrs.plan)
     end
   end
 end
