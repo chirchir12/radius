@@ -2,7 +2,7 @@ defmodule Radius.AuthTest do
   use Radius.DataCase
 
   alias Radius.Auth
-  alias Radius.Auth.{Radcheck}
+  alias Radius.Auth.{Radcheck, Hotspot}
 
   describe "login/2" do
     test "login/2 with :hotspot creates a new hotspot session" do
@@ -15,7 +15,7 @@ defmodule Radius.AuthTest do
         priority: 1
       }
 
-      assert {:ok, :ok} = Auth.login(:hotspot, attrs)
+      assert {:ok, %Hotspot{}} = Auth.login(:hotspot, attrs)
       assert Repo.get_by(Radcheck, username: "test_user") != nil
       assert Repo.get_by(Radcheck, username: "test_user").customer == attrs.customer
     end
@@ -31,7 +31,7 @@ defmodule Radius.AuthTest do
       }
 
       # Create the initial session
-      assert {:ok, :ok} = Auth.login(:hotspot, attrs)
+      assert {:ok, %Hotspot{}} = Auth.login(:hotspot, attrs)
 
       # Attempt to create a session with the same username
       assert {:error, :session_exists} = Auth.login(:hotspot, attrs)
@@ -111,7 +111,7 @@ defmodule Radius.AuthTest do
         priority: 1
       }
 
-      {:ok, :ok} = Auth.login(:hotspot, attrs)
+      {:ok, %Hotspot{}} = Auth.login(:hotspot, attrs)
 
       assert {:ok, :ok} = Auth.logout(:hotspot, attrs.customer)
       assert Repo.get_by(Radcheck, username: "test_user") == nil
@@ -146,7 +146,7 @@ defmodule Radius.AuthTest do
         priority: 1
       }
 
-      {:ok, :ok} = Auth.login(:hotspot, initial_attrs)
+      {:ok, %Hotspot{}} = Auth.login(:hotspot, initial_attrs)
 
       # Extend the session
 

@@ -32,23 +32,23 @@ defmodule Radius.Auth.Hotspot do
     |> validate_required([:customer, :duration_mins])
   end
 
-  def login(%__MODULE__{} = attrs) do
+  def login(%__MODULE__{} = hotspot) do
     check = %{
-      username: attrs.username,
+      username: hotspot.username,
       attribute: "Cleartext-Password",
       op: "==",
-      value: attrs.password,
-      customer: attrs.customer,
+      value: hotspot.password,
+      customer: hotspot.customer,
       service: "hotspot",
-      expire_on: attrs.expire_on
+      expire_on: hotspot.expire_on
     }
 
     group = %{
-      username: attrs.username,
-      groupname: attrs.plan,
-      customer: attrs.customer,
+      username: hotspot.username,
+      groupname: hotspot.plan,
+      customer: hotspot.customer,
       service: "hotspot",
-      priority: attrs.priority
+      priority: hotspot.priority
     }
 
     case Repo.transaction(fn ->
@@ -57,7 +57,7 @@ defmodule Radius.Auth.Hotspot do
              :ok
            end
          end) do
-      {:ok, :ok} -> {:ok, :ok}
+      {:ok, :ok} -> {:ok, hotspot}
       {:ok, {:error, reason}} -> {:error, reason}
       {:error, reason} -> {:error, reason}
     end

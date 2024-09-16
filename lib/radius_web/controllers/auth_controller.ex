@@ -1,15 +1,15 @@
 defmodule RadiusWeb.AuthController do
   use RadiusWeb, :controller
 
-  alias Radius.Auth
+  alias Radius.{Auth, Auth.Hotspot}
 
   action_fallback RadiusWeb.FallbackController
 
   def hotspot_login(conn, %{"auth" => params}) do
-    with {:ok, :ok} <- Auth.login(:hotspot, params) do
+    with {:ok, %Hotspot{} = data} <- Auth.login(:hotspot, params) do
       conn
       |> put_status(:ok)
-      |> json(%{status: :ok})
+      |> render("hotspot.json", hotspot: data)
     end
   end
 

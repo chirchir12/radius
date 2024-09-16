@@ -16,7 +16,7 @@ defmodule Radius.Auth.HotspotTest do
         plan: "basic_plan"
       }
 
-      assert {:ok, :ok} = Hotspot.login(attrs)
+      assert {:ok, %Hotspot{}} = Hotspot.login(attrs)
 
       # Verify radcheck entry
       radcheck = Repo.get_by(Radcheck, username: "testuser")
@@ -60,7 +60,7 @@ defmodule Radius.Auth.HotspotTest do
         plan: "basic_plan"
       }
 
-      assert {:ok, :ok} = Hotspot.login(attrs)
+      assert {:ok, %Hotspot{}} = Hotspot.login(attrs)
 
       assert {:ok, :ok} = Hotspot.logout(customer)
 
