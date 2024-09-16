@@ -3,7 +3,7 @@ defmodule RadiusWeb.PolicyJSON do
     %{data: hotspot}
   end
 
-  def render("show_ppp.json", %{ppp: ppp}) do
-    %{data: ppp}
+  def render("show_ppoe.json", %{ppoe: ppoe}) do
+    %{data: ppoe}
   end
 end

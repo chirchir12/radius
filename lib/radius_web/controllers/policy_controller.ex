@@ -30,22 +30,22 @@ defmodule RadiusWeb.PolicyController do
 
   # PPPoE actions
   def create_ppoe(conn, %{"policy" => params}) do
-    with {:ok, :ok} <- Policies.add(:ppp, params) do
-      render(conn, "show_ppp.json", ppp: %{status: :ok})
+    with {:ok, :ok} <- Policies.add(:ppoe, params) do
+      render(conn, "show_ppoe.json", ppoe: %{status: :ok})
     end
   end
 
   def update_ppoe(conn, %{"plan" => plan, "policy" => params}) do
     params = Map.put(params, "plan", plan)
 
-    with {:ok, :ok} <- Policies.update(:ppp, params) do
-      render(conn, "show_ppp.json", ppp: %{status: :ok})
+    with {:ok, :ok} <- Policies.update(:ppoe, params) do
+      render(conn, "show_ppoe.json", ppoe: %{status: :ok})
     end
   end
 
   def delete_ppoe(conn, %{"plan" => plan}) do
-    with {:ok, :ok} <- Policies.delete(:ppp, plan) do
-      render(conn, "show_ppp.json", ppp: %{status: :ok})
+    with {:ok, :ok} <- Policies.delete(:ppoe, plan) do
+      render(conn, "show_ppoe.json", ppoe: %{status: :ok})
     end
   end
 end
