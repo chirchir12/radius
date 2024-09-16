@@ -12,6 +12,7 @@ defmodule Radius.Auth.Hotspot do
     field :password, :string
     field :customer, :string
     field :service, :string, default: "hotspot"
+    field :duration_mins, :integer
     field :expire_on, :utc_datetime
     field :plan, :string
     field :priority, :integer, default: 0
@@ -19,16 +20,16 @@ defmodule Radius.Auth.Hotspot do
 
   def changeset(hotspot, attrs) do
     hotspot
-    |> cast(attrs, [:username, :password, :customer, :service, :expire_on, :plan, :priority])
-    |> validate_required([:username, :password, :customer, :expire_on, :plan])
+    |> cast(attrs, [:username, :password, :customer, :service, :duration_mins, :plan, :priority, :expire_on])
+    |> validate_required([:username, :password, :customer, :duration_mins, :plan])
     |> validate_inclusion(:service, ["hotspot"])
     |> validate_number(:priority, greater_than_or_equal_to: 0)
   end
 
   def extend_session_changeset(hotspot, attrs) do
     hotspot
-    |> cast(attrs, [:customer, :expire_on])
-    |> validate_required([:customer, :expire_on])
+    |> cast(attrs, [:customer, :duration_mins])
+    |> validate_required([:customer, :duration_mins])
   end
 
   def login(%__MODULE__{} = attrs) do

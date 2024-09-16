@@ -34,7 +34,9 @@ defmodule Radius.Auth do
 
       true ->
         changes = changeset.changes
-        Hotspot.extend_expiration(changes.customer, changes.expire_on)
+        now = DateTime.utc_now()
+        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
+        Hotspot.extend_expiration(changes.customer, expire_on)
     end
   end
 
@@ -55,6 +57,8 @@ defmodule Radius.Auth do
 
       true ->
         changes = changeset.changes
+        now = DateTime.utc_now()
+        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
 
         data = %{
           hotspot
@@ -62,7 +66,7 @@ defmodule Radius.Auth do
             password: changes.password,
             customer: changes.customer,
             service: "hotspot",
-            expire_on: changes.expire_on,
+            expire_on: expire_on,
             plan: changes.plan,
             priority: Map.get(changes, :priority, 10)
         }

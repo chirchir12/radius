@@ -10,7 +10,7 @@ defmodule Radius.AuthTest do
         username: "test_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         plan: Ecto.UUID.generate(),
         priority: 1
       }
@@ -25,7 +25,7 @@ defmodule Radius.AuthTest do
         username: "existing_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         plan: Ecto.UUID.generate(),
         priority: 1
       }
@@ -45,7 +45,7 @@ defmodule Radius.AuthTest do
         username: nil,
         password: nil,
         customer: nil,
-        expire_on: nil,
+        duration_mins: nil,
         plan: nil,
         priority: 1
       }
@@ -106,7 +106,7 @@ defmodule Radius.AuthTest do
         username: "test_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         plan: Ecto.UUID.generate(),
         priority: 1
       }
@@ -133,36 +133,6 @@ defmodule Radius.AuthTest do
     end
   end
 
-  describe "clear_session/0" do
-    test "clear_session/0 removes expired sessions" do
-      expired_attrs = %{
-        username: "expired_user",
-        password: "password123",
-        customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(-3600, :second),
-        plan: Ecto.UUID.generate(),
-        priority: 1
-      }
-
-      {:ok, :ok} = Auth.login(:hotspot, expired_attrs)
-
-      valid_attrs = %{
-        username: "valid_user",
-        password: "password123",
-        customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
-        plan: Ecto.UUID.generate(),
-        priority: 1
-      }
-
-      {:ok, :ok} = Auth.login(:hotspot, valid_attrs)
-
-      Auth.clear_session()
-
-      assert Repo.get_by(Radcheck, username: "expired_user") == nil
-      assert Repo.get_by(Radcheck, username: "valid_user") != nil
-    end
-  end
 
   describe "extend_session/1" do
     test "extend_session/1 successfully extends an existing session" do
@@ -171,7 +141,7 @@ defmodule Radius.AuthTest do
         username: "test_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         plan: Ecto.UUID.generate(),
         priority: 1
       }
@@ -179,11 +149,10 @@ defmodule Radius.AuthTest do
       {:ok, :ok} = Auth.login(:hotspot, initial_attrs)
 
       # Extend the session
-      new_expiration = DateTime.utc_now() |> DateTime.add(7200, :second)
 
       extend_attrs = %{
         customer: initial_attrs.customer,
-        expire_on: new_expiration
+        duration_mins: 10
       }
 
       assert {:ok, :ok} = Auth.extend_session(extend_attrs)
@@ -192,7 +161,7 @@ defmodule Radius.AuthTest do
     test "extend_session/1 returns error for non-existent session" do
       non_existent_attrs = %{
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second)
+        duration_mins: 5
       }
 
       assert {:error, :customer_session_not_found} = Auth.extend_session(non_existent_attrs)
@@ -201,7 +170,7 @@ defmodule Radius.AuthTest do
     test "extend_session/1 returns error for invalid attributes" do
       invalid_attrs = %{
         customer: nil,
-        expire_on: "invalid_date"
+        duration_mins: nil
       }
 
       assert {:error, %Ecto.Changeset{valid?: false}} = Auth.extend_session(invalid_attrs)
