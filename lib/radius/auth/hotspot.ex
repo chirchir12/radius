@@ -75,13 +75,38 @@ defmodule Radius.Auth.Hotspot do
   end
 
   def logout(customer) do
-    radcheck_query = from(r in Radcheck, where: r.customer == ^customer)
+    radcheck_query = from(r in Radcheck, where: r.customer == ^customer and r.service == ^"hotspot")
     radusergroup_query = from(r in Radusergroup, where: r.customer == ^customer)
 
     Repo.transaction(fn ->
       delete_records(radcheck_query, radusergroup_query)
     end)
     |> handle_transaction_result()
+  end
+
+  def expired_sessions() do
+    case Repo.transaction(fn ->
+           with {:ok, {_, customers}} <- clear_hotspot_auth_and_select(),
+                customer_ids <- customers |> Enum.map(& &1.customer),
+                {:ok, _} <- clear_hotspot_usergroup(customer_ids) do
+             {:ok, customers}
+           end
+         end) do
+      {:ok, {:ok, customers}} -> {:ok, customers}
+      {:ok, {:error, reason}} -> {:error, reason}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp clear_hotspot_auth_and_select() do
+    now = DateTime.utc_now()
+    query1 = from(r in Radcheck, where: r.expire_on < ^now and r.service == "hotspot", select: r)
+    {:ok, Repo.delete_all(query1)}
+  end
+
+  defp clear_hotspot_usergroup(customers) do
+    query2 = from(r in Radusergroup, where: r.customer in ^customers)
+    {:ok, Repo.delete_all(query2)}
   end
 
   defp delete_records(radcheck_query, radusergroup_query) do

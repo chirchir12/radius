@@ -17,12 +17,12 @@ defmodule Radius.Rmq.SessionPublisher do
 
   def publish_session(data, key) do
     case GenRMQ.Publisher.publish(__MODULE__, data, key) do
-      {:ok, _} ->
-        Logger.info("Published expired hotspot session")
+      :ok ->
+        {:ok, :ok}
+      {:ok, :confirmed} ->
         {:ok, :ok}
 
       {:error, reason} ->
-        Logger.error("Error publishing expired hotspot session: #{inspect(reason)}")
         {:error, reason}
     end
   end

@@ -2,7 +2,6 @@ defmodule Radius.Auth do
   import Ecto.Query, warn: false
   alias Radius.Repo
   alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
-  alias Radius.UserGroup.Radusergroup
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
@@ -39,62 +38,12 @@ defmodule Radius.Auth do
     end
   end
 
-  def clear_expired_sessions(:hotspot) do
-    case Repo.transaction(fn ->
-           with {:ok, {_, customers}} <- clear_hotspot_auth_and_select(),
-                customer_ids <- customers |> Enum.map(& &1.customer),
-                {:ok, _} <- clear_hotspot_usergroup(customer_ids) do
-             {:ok, customers}
-           end
-         end) do
-      {:ok, {:ok, customers}} -> {:ok, customers}
-      {:ok, {:error, reason}} -> {:error, reason}
-      {:error, reason} -> {:error, reason}
-    end
-  end
 
-  defp clear_hotspot_auth_and_select() do
-    now = DateTime.utc_now()
-    query1 = from(r in Radcheck, where: r.expire_on < ^now and r.service == "hotspot", select: r)
-    {:ok, Repo.delete_all(query1)}
-  end
-
-  defp clear_hotspot_usergroup(customers) do
-    query2 = from(r in Radusergroup, where: r.customer in ^customers)
-    {:ok, Repo.delete_all(query2)}
-  end
 
   def get_expired_sessions(:ppp) do
     now = DateTime.utc_now()
     query = from(r in Radcheck, where: r.expire_on < ^now and r.service == "ppp", select: r)
     {:ok, Repo.delete(query)}
-  end
-
-  def test_select() do
-    now = DateTime.utc_now()
-
-    from(r in Radcheck, where: r.expire_on < ^now and r.service == "hotspot", select: r)
-    |> Repo.delete_all()
-  end
-
-  def clear_session(session_ids) do
-    query = from(r in Radcheck, where: r.id in ^session_ids)
-    Repo.delete_all(query)
-  end
-
-  def clear_session_for(customers) do
-    query = from(rg in Radusergroup, where: rg.customer in ^customers)
-
-    case Repo.delete_all(query) do
-      {0, nil} ->
-        :ok
-
-      {_, nil} ->
-        :ok
-
-      {_, _} ->
-        :ok
-    end
   end
 
   defp validate_login(%Hotspot{} = hotspot, attrs) do
