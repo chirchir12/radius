@@ -68,7 +68,8 @@ defmodule Radius.Auth do
             service: "hotspot",
             expire_on: expire_on,
             plan: changes.plan,
-            priority: Map.get(changes, :priority, 10)
+            priority: Map.get(changes, :priority, 10),
+            duration_mins: changes.duration_mins
         }
 
         {:ok, data}
@@ -94,7 +95,8 @@ defmodule Radius.Auth do
             customer: changes.customer,
             service: "ppp",
             expire_on: expire_on,
-            profile: changes.profile
+            profile: changes.profile,
+            duration_mins: changes.duration_mins
         }
 
         {:ok, data}

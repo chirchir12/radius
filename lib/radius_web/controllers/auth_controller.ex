@@ -1,7 +1,7 @@
 defmodule RadiusWeb.AuthController do
   use RadiusWeb, :controller
 
-  alias Radius.{Auth, Auth.Hotspot}
+  alias Radius.{Auth, Auth.Hotspot, Auth.Ppoe}
 
   action_fallback RadiusWeb.FallbackController
 
@@ -14,10 +14,10 @@ defmodule RadiusWeb.AuthController do
   end
 
   def ppp_login(conn, %{"auth" => params}) do
-    with {:ok, :ok} <- Auth.login(:ppp, params) do
+    with {:ok, %Ppoe{} = data} <- Auth.login(:ppp, params) do
       conn
       |> put_status(:ok)
-      |> json(%{status: :ok})
+      |> render("ppp.json", ppp: data)
     end
   end
 

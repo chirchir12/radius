@@ -2,7 +2,7 @@ defmodule Radius.AuthTest do
   use Radius.DataCase
 
   alias Radius.Auth
-  alias Radius.Auth.{Radcheck, Hotspot}
+  alias Radius.Auth.{Radcheck, Hotspot, Ppoe}
 
   describe "login/2" do
     test "login/2 with :hotspot creates a new hotspot session" do
@@ -62,7 +62,7 @@ defmodule Radius.AuthTest do
         profile: "default"
       }
 
-      assert {:ok, :ok} = Auth.login(:ppp, attrs)
+      assert {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
     end
 
     test "login/2 with :ppp returns error when session already exists" do
@@ -77,7 +77,7 @@ defmodule Radius.AuthTest do
       }
 
       # Create the initial session
-      assert {:ok, :ok} = Auth.login(:ppp, attrs)
+      assert {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
 
       # Attempt to create a session with the same username
       assert {:error, :session_exists} = Auth.login(:ppp, attrs)
@@ -126,7 +126,7 @@ defmodule Radius.AuthTest do
         profile: "default"
       }
 
-      {:ok, :ok} = Auth.login(:ppp, attrs)
+      {:ok, %Ppoe{}} = Auth.login(:ppp, attrs)
 
       assert {:ok, :ok} = Auth.logout(:ppp, attrs.customer)
       assert Repo.get_by(Radcheck, username: "test_user") == nil

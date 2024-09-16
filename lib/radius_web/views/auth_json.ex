@@ -6,7 +6,21 @@ defmodule RadiusWeb.AuthJSON do
       plan: hotspot.plan,
       customer: hotspot.customer,
       expire_on: hotspot.expire_on,
-      priority: hotspot.priority
+      priority: hotspot.priority,
+      service: hotspot.service,
+      duration_mins: hotspot.duration_mins
+    }}
+  end
+
+  def render("ppp.json", %{ppp: ppp}) do
+    %{data: %{
+      username: ppp.username,
+      password: ppp.password,
+      profile: ppp.profile,
+      customer: ppp.customer,
+      expire_on: ppp.expire_on,
+      duration_mins: ppp.duration_mins,
+      service: ppp.service
     }}
   end
 

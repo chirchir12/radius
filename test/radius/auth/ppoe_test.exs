@@ -16,7 +16,7 @@ defmodule Radius.Auth.PpoeTest do
         profile: "testprofile"
       }
 
-      assert {:ok, :ok} = Ppoe.login(attrs)
+      assert {:ok, %Ppoe{}} = Ppoe.login(attrs)
 
       # Verify credentials entry
       assert %Radcheck{} =

@@ -23,25 +23,25 @@ defmodule Radius.Auth.Ppoe do
     |> validate_inclusion(:service, ["ppp"])
   end
 
-  def login(%__MODULE__{} = attrs) do
+  def login(%__MODULE__{} = ppp) do
     credentials = %{
-      username: attrs.username,
+      username: ppp.username,
       attribute: "Cleartext-Password",
       op: ":=",
-      value: attrs.password,
-      customer: attrs.customer,
+      value: ppp.password,
+      customer: ppp.customer,
       service: "ppp",
-      expire_on: attrs.expire_on
+      expire_on: ppp.expire_on
     }
 
     profile = %{
-      username: attrs.username,
+      username: ppp.username,
       attribute: "User-Profile",
       op: ":=",
-      value: attrs.profile,
-      customer: attrs.customer,
+      value: ppp.profile,
+      customer: ppp.customer,
       service: "ppp",
-      expire_on: attrs.expire_on
+      expire_on: ppp.expire_on
     }
 
     cred_changeset = Radcheck.changeset(%Radcheck{}, credentials)
@@ -53,7 +53,7 @@ defmodule Radius.Auth.Ppoe do
 
       case Repo.insert_all(Radcheck, [valid_credentials, valid_profile]) do
         {2, nil} ->
-          {:ok, :ok}
+          {:ok, ppp}
 
         {_, _errors} ->
           {:error, %{credentials: cred_changeset, profile: prof_changeset}}
