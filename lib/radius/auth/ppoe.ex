@@ -11,14 +11,15 @@ defmodule Radius.Auth.Ppoe do
     field :password, :string
     field :customer, :string
     field :service, :string, default: "ppp"
+    field :duration_mins, :integer
     field :expire_on, :naive_datetime
     field :profile, :string
   end
 
   def changeset(ppoe, attrs) do
     ppoe
-    |> cast(attrs, [:username, :password, :customer, :service, :expire_on, :profile])
-    |> validate_required([:username, :password, :customer, :expire_on, :profile])
+    |> cast(attrs, [:username, :password, :customer, :service, :duration_mins, :expire_on, :profile])
+    |> validate_required([:username, :password, :customer, :duration_mins, :profile])
     |> validate_inclusion(:service, ["ppp"])
   end
 

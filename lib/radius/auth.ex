@@ -84,6 +84,8 @@ defmodule Radius.Auth do
 
       true ->
         changes = changeset.changes
+        now = DateTime.utc_now()
+        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
 
         data = %{
           ppoe
@@ -91,7 +93,7 @@ defmodule Radius.Auth do
             password: changes.password,
             customer: changes.customer,
             service: "ppp",
-            expire_on: changes.expire_on,
+            expire_on: expire_on,
             profile: changes.profile
         }
 

@@ -58,7 +58,7 @@ defmodule Radius.AuthTest do
         username: "test_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         profile: "default"
       }
 
@@ -70,7 +70,7 @@ defmodule Radius.AuthTest do
         username: "existing_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         plan: Ecto.UUID.generate(),
         priority: 1,
         profile: "default"
@@ -91,7 +91,7 @@ defmodule Radius.AuthTest do
         username: nil,
         password: nil,
         customer: nil,
-        expire_on: nil,
+        duration_mins: nil,
         plan: nil,
         priority: 1
       }
@@ -122,7 +122,7 @@ defmodule Radius.AuthTest do
         username: "test_user",
         password: "password123",
         customer: Ecto.UUID.generate(),
-        expire_on: DateTime.utc_now() |> DateTime.add(3600, :second),
+        duration_mins: 5,
         profile: "default"
       }
 
