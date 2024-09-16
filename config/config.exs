@@ -46,7 +46,7 @@ config :radius, Oban,
     {Oban.Plugins.Pruner, max_age: 300},
     {Oban.Plugins.Cron,
      crontab: [
-       {"* * * * *", Radius.Workers.ClearHotspotSession}
+       {"* * * * *", Radius.Workers.HotspotSessionPruner}
      ]}
   ],
   queues: [hotspot_sessions: 10, ppoe_sessions: 10],
