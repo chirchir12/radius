@@ -14,16 +14,16 @@ defmodule RadiusWeb.AuthJSON do
     }
   end
 
-  def render("ppp.json", %{ppp: ppp}) do
+  def render("ppoe.json", %{ppoe: ppoe}) do
     %{
       data: %{
-        username: ppp.username,
-        password: ppp.password,
-        profile: ppp.profile,
-        customer: ppp.customer,
-        expire_on: ppp.expire_on,
-        duration_mins: ppp.duration_mins,
-        service: ppp.service
+        username: ppoe.username,
+        password: ppoe.password,
+        profile: ppoe.profile,
+        customer: ppoe.customer,
+        expire_on: ppoe.expire_on,
+        duration_mins: ppoe.duration_mins,
+        service: ppoe.service
       }
     }
   end

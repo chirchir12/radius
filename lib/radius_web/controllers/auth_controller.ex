@@ -13,16 +13,16 @@ defmodule RadiusWeb.AuthController do
     end
   end
 
-  def ppp_login(conn, %{"auth" => params}) do
-    with {:ok, %Ppoe{} = data} <- Auth.login(:ppp, params) do
+  def ppoe_login(conn, %{"auth" => params}) do
+    with {:ok, %Ppoe{} = data} <- Auth.login(:ppoe, params) do
       conn
       |> put_status(:ok)
-      |> render("ppp.json", ppp: data)
+      |> render("ppoe.json", ppoe: data)
     end
   end
 
-  def ppp_logout(conn, %{"customer" => customer}) do
-    with {:ok, :ok} <- Auth.logout(:ppp, customer) do
+  def ppoe_logout(conn, %{"customer" => customer}) do
+    with {:ok, :ok} <- Auth.logout(:ppoe, customer) do
       conn
       |> put_status(:ok)
       |> json(%{status: :ok})
@@ -44,12 +44,4 @@ defmodule RadiusWeb.AuthController do
       |> json(%{status: :ok})
     end
   end
-
-  # def clear_session(conn, _params) do
-  #   Auth.clear_session()
-
-  #   conn
-  #   |> put_status(:ok)
-  #   |> json(%{status: :ok})
-  # end
 end

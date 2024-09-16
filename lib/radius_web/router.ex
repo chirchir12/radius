@@ -23,8 +23,8 @@ defmodule RadiusWeb.Router do
     delete "/policies/ppoe/:plan", PolicyController, :delete_ppoe
 
     # PPPoE Auth routes
-    post "/auth/ppoe/login", AuthController, :ppp_login
-    post "/auth/ppoe/logout/:customer", AuthController, :ppp_logout
+    post "/auth/ppoe/login", AuthController, :ppoe_login
+    post "/auth/ppoe/logout/:customer", AuthController, :ppoe_logout
 
     # Clear session
     post "/auth/session/extend", AuthController, :extend_session
