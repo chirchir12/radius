@@ -2,6 +2,7 @@ defmodule Radius.Auth.Radcheck do
   alias Radius.Repo
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
 
   schema "radcheck" do
     field :username, :string
@@ -32,6 +33,26 @@ defmodule Radius.Auth.Radcheck do
   def delete_radcheck(%__MODULE__{} = radcheck) do
     Repo.delete(radcheck)
   end
+
+
+  def delete_expired_check(customer, service) when service in ["hotspot", "ppoe"] do
+    now = DateTime.utc_now()
+    query = from(r in __MODULE__, where: r.expire_on < ^now and r.customer == ^customer and r.service == ^service, select: r)
+    {:ok, Repo.delete_all(query)}
+  end
+
+  def delete_expired_check(customer) do
+    now = DateTime.utc_now()
+    query = from(r in __MODULE__, where: r.expire_on < ^now and r.customer == ^customer, select: r)
+    {:ok, Repo.delete_all(query)}
+  end
+
+  def delete_expired_check() do
+    now = DateTime.utc_now()
+    query = from(r in __MODULE__, where: r.expire_on < ^now, select: r)
+    {:ok, Repo.delete_all(query)}
+  end
+
 
   def changeset(radcheck, attrs) do
     radcheck

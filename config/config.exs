@@ -46,14 +46,23 @@ config :radius, Oban,
     {Oban.Plugins.Pruner, max_age: 300},
     {Oban.Plugins.Cron,
      crontab: [
-       {"*/5 * * * *", Radius.Workers.SessionPrunner}
+       {"10 * * * *", Radius.Pipeline.Workers.SessionPrunner}
      ]}
   ],
   queues: [
-    prune_sessions_per_customer: 10,
-    prune_all_expired_sessions: 10
+    prune_hotspot_sessions: 10,
+    prune_ppoe_sessions: 10
   ],
   repo: Radius.Repo
+
+config :radius, Radius.Pipeline.Jobs.SessionSchedular,
+    queues: [
+      hotspot: :prune_hotspot_sessions,
+      ppoe: :prune_ppoe_sessions
+  ],
+  workers: [
+    hotspot: Radius.Pipeline.Workers.HotspotSessionPruner
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

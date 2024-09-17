@@ -2,14 +2,14 @@ defmodule Radius.Auth do
   import Ecto.Query, warn: false
   alias Radius.Repo
   alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
-  alias Radius.Workers.HotspotSessionPruner
+  alias Radius.Pipeline.Jobs.SessionSchedular
+  alias Radius.UserGroup.Radusergroup
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
          :ok <- check_session_exists(data.customer),
-         {:ok, %Hotspot{} = data} <- Hotspot.login(data) do
-      prun_after = data.duration_mins * 60
-      # HotspotSessionPruner.enqueue(data.customer, prun_after, "hotspot")
+         {:ok, %Hotspot{} = data} <- Hotspot.login(data),
+         {:ok, %Oban.Job{}} <- SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
       {:ok, data}
     end
   end
@@ -44,10 +44,32 @@ defmodule Radius.Auth do
     end
   end
 
-  def get_expired_sessions(:ppoe) do
-    now = DateTime.utc_now()
-    query = from(r in Radcheck, where: r.expire_on < ^now and r.service == "ppoe", select: r)
-    {:ok, Repo.delete(query)}
+  def fetch_expired_session(customer, service) do
+    case Repo.transaction(fn ->
+           with {:ok, {_, sessions}} <- Radcheck.delete_expired_check(customer, service),
+           customer_ids <- sessions |> Enum.map(& &1.customer),
+                {:ok, {_, _}} <- Radusergroup.delete_user_group(customer_ids) do
+             {:ok, sessions}
+           end
+         end) do
+      {:ok, {:ok, sessions}} -> {:ok, sessions}
+      {:ok, {:error, reason}} -> {:error, reason}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  def fetch_expired_session() do
+    case Repo.transaction(fn ->
+           with {:ok, {_, sessions}} <- Radcheck.delete_expired_check(),
+           customer_ids <- sessions |> Enum.map(& &1.customer),
+                {:ok, {_, _}} <- Radusergroup.delete_user_group(customer_ids) do
+             {:ok, sessions}
+           end
+         end) do
+      {:ok, {:ok, sessions}} -> {:ok, sessions}
+      {:ok, {:error, reason}} -> {:error, reason}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   defp validate_login(%Hotspot{} = hotspot, attrs) do

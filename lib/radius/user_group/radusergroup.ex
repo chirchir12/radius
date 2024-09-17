@@ -2,6 +2,7 @@ defmodule Radius.UserGroup.Radusergroup do
   alias Radius.Repo
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, warn: false
 
   schema "radusergroup" do
     field :username, :string
@@ -30,6 +31,17 @@ defmodule Radius.UserGroup.Radusergroup do
   def delete_radusergroup(%__MODULE__{} = radusergroup) do
     Repo.delete(radusergroup)
   end
+
+  def delete_user_group(customers) when is_list(customers) do
+    query = from(r in __MODULE__, where: r.customer in ^customers, select: r)
+    {:ok, Repo.delete_all(query)}
+  end
+
+  def delete_user_group(customer) do
+    query = from(r in __MODULE__, where: r.customer == ^customer, select: r)
+    {:ok, Repo.delete_all(query)}
+  end
+
 
   def update_radusergroup(%__MODULE__{} = radusergroup, attrs) do
     radusergroup
