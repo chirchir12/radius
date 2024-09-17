@@ -71,6 +71,16 @@ defmodule Radius.Auth.Radcheck do
     end
   end
 
+  def fetch_and_delete_expired_after(in_mins) do
+    expiration_time = DateTime.utc_now() |> DateTime.add(-in_mins * 60, :second)
+    query = from(r in __MODULE__, where: r.expire_on <= ^expiration_time, select: r)
+
+    case Repo.delete_all(query) do
+      {0, []} -> {:error, :no_session_to_delete}
+      {_count, deleted_items} -> {:ok, deleted_items}
+    end
+  end
+
   def changeset(radcheck, attrs) do
     radcheck
     |> cast(attrs, [:username, :attribute, :op, :value, :customer, :service, :expire_on])
