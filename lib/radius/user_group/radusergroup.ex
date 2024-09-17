@@ -42,7 +42,6 @@ defmodule Radius.UserGroup.Radusergroup do
     {:ok, Repo.delete_all(query)}
   end
 
-
   def update_radusergroup(%__MODULE__{} = radusergroup, attrs) do
     radusergroup
     |> changeset(attrs)

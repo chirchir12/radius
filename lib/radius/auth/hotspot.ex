@@ -96,11 +96,6 @@ defmodule Radius.Auth.Hotspot do
     |> handle_transaction_result()
   end
 
-
-
-
-
-
   defp delete_records(radcheck_query, radusergroup_query) do
     {deleted_radcheck, _} = Repo.delete_all(radcheck_query)
     {deleted_radusergroup, _} = Repo.delete_all(radusergroup_query)

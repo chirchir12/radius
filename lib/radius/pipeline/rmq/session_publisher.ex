@@ -16,10 +16,10 @@ defmodule Radius.Rmq.SessionPublisher do
     ]
   end
 
-
-
-  def publish(encoded_data, service_type) when is_binary(encoded_data) and byte_size(encoded_data) > 0 do
+  def publish(encoded_data, service_type)
+      when is_binary(encoded_data) and byte_size(encoded_data) > 0 do
     queue = get_queue(service_type)
+
     case GenRMQ.Publisher.publish(__MODULE__, encoded_data, queue) do
       :ok ->
         Logger.info("Published #{service_type} message to #{queue}")

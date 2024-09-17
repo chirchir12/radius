@@ -10,7 +10,12 @@ defmodule Radius.UserGroup.RadusergroupTest do
       service: "hotspot",
       customer: Ecto.UUID.generate()
     }
-    @valid_ppoe_attrs %{username: "ppoeuser", groupname: "ppoegroup", priority: 1, service: "ppoe"}
+    @valid_ppoe_attrs %{
+      username: "ppoeuser",
+      groupname: "ppoegroup",
+      priority: 1,
+      service: "ppoe"
+    }
 
     test "create_radusergroup/1 with valid hotspot data creates a radusergroup" do
       assert {:ok, %Radusergroup{} = radusergroup} =

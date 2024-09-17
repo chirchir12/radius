@@ -34,25 +34,42 @@ defmodule Radius.Auth.Radcheck do
     Repo.delete(radcheck)
   end
 
-
-  def delete_expired_check(customer, service) when service in ["hotspot", "ppoe"] do
+  def fetch_and_delete_expired_check(customer, service) when service in ["hotspot", "ppoe"] do
     now = DateTime.utc_now()
-    query = from(r in __MODULE__, where: r.expire_on < ^now and r.customer == ^customer and r.service == ^service, select: r)
-    {:ok, Repo.delete_all(query)}
+
+    query =
+      from(r in __MODULE__,
+        where: r.expire_on <= ^now and r.customer == ^customer and r.service == ^service,
+        select: r
+      )
+
+    case Repo.delete_all(query) do
+      {0, []} -> {:error, :no_session_to_delete}
+      {_count, deleted_items} -> {:ok, deleted_items}
+    end
   end
 
-  def delete_expired_check(customer) do
+  def fetch_and_delete_expired_check(customer) do
     now = DateTime.utc_now()
-    query = from(r in __MODULE__, where: r.expire_on < ^now and r.customer == ^customer, select: r)
-    {:ok, Repo.delete_all(query)}
+
+    query =
+      from(r in __MODULE__, where: r.expire_on <= ^now and r.customer == ^customer, select: r)
+
+    case Repo.delete_all(query) do
+      {0, []} -> {:error, :no_session_to_delete}
+      {_count, deleted_items} -> {:ok, deleted_items}
+    end
   end
 
-  def delete_expired_check() do
+  def fetch_and_delete_expired_check() do
     now = DateTime.utc_now()
-    query = from(r in __MODULE__, where: r.expire_on < ^now, select: r)
-    {:ok, Repo.delete_all(query)}
-  end
+    query = from(r in __MODULE__, where: r.expire_on <= ^now, select: r)
 
+    case Repo.delete_all(query) do
+      {0, []} -> {:error, :no_session_to_delete}
+      {_count, deleted_items} -> {:ok, deleted_items}
+    end
+  end
 
   def changeset(radcheck, attrs) do
     radcheck

@@ -3,21 +3,23 @@ defmodule Radius.Auth do
   alias Radius.Repo
   alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
   alias Radius.Pipeline.Jobs.SessionSchedular
-  alias Radius.UserGroup.Radusergroup
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
          :ok <- check_session_exists(data.customer),
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
-         {:ok, %Oban.Job{}} <- SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
+         {:ok, %Oban.Job{}} <-
+           SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
       {:ok, data}
     end
   end
 
   def login(:ppoe, attrs) do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
-         :ok <- check_session_exists(data.customer) do
-      Ppoe.login(data)
+         :ok <- check_session_exists(data.customer),
+         {:ok, %Ppoe{} = data} <- Ppoe.login(data),
+         {:ok, %Oban.Job{}} <- SessionSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
+      {:ok, data}
     end
   end
 
@@ -44,34 +46,6 @@ defmodule Radius.Auth do
     end
   end
 
-  def fetch_expired_session(customer, service) do
-    case Repo.transaction(fn ->
-           with {:ok, {_, sessions}} <- Radcheck.delete_expired_check(customer, service),
-           customer_ids <- sessions |> Enum.map(& &1.customer),
-                {:ok, {_, _}} <- Radusergroup.delete_user_group(customer_ids) do
-             {:ok, sessions}
-           end
-         end) do
-      {:ok, {:ok, sessions}} -> {:ok, sessions}
-      {:ok, {:error, reason}} -> {:error, reason}
-      {:error, reason} -> {:error, reason}
-    end
-  end
-
-  def fetch_expired_session() do
-    case Repo.transaction(fn ->
-           with {:ok, {_, sessions}} <- Radcheck.delete_expired_check(),
-           customer_ids <- sessions |> Enum.map(& &1.customer),
-                {:ok, {_, _}} <- Radusergroup.delete_user_group(customer_ids) do
-             {:ok, sessions}
-           end
-         end) do
-      {:ok, {:ok, sessions}} -> {:ok, sessions}
-      {:ok, {:error, reason}} -> {:error, reason}
-      {:error, reason} -> {:error, reason}
-    end
-  end
-
   defp validate_login(%Hotspot{} = hotspot, attrs) do
     changeset = Hotspot.changeset(hotspot, attrs)
 
@@ -82,7 +56,8 @@ defmodule Radius.Auth do
       true ->
         changes = changeset.changes
         now = DateTime.utc_now()
-        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
+        # -5 seconds to avoid race condition
+        expire_on = DateTime.add(now, changes.duration_mins * 60 - 5, :second)
 
         data = %{
           hotspot
@@ -110,7 +85,8 @@ defmodule Radius.Auth do
       true ->
         changes = changeset.changes
         now = DateTime.utc_now()
-        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
+        # -5 seconds to avoid race condition
+        expire_on = DateTime.add(now, changes.duration_mins * 60 - 5, :second)
 
         data = %{
           ppoe
