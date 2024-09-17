@@ -13,6 +13,7 @@ defmodule Radius.Pipeline.Workers.PpoeSessionPruner do
         Logger.info("Pruning PPOE Sessions for #{customer_id}")
 
         sessions
+        |> Enum.uniq_by(& &1.customer)
         |> format_data()
         |> encode_data()
         |> SessionPublisher.publish("ppoe")
