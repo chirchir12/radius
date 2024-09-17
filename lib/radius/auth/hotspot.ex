@@ -37,8 +37,8 @@ defmodule Radius.Auth.Hotspot do
 
   def extend_session_changeset(hotspot, attrs) do
     hotspot
-    |> cast(attrs, [:customer, :duration_mins])
-    |> validate_required([:customer, :duration_mins])
+    |> cast(attrs, [:customer, :duration_mins, :service])
+    |> validate_required([:customer, :duration_mins, :service])
   end
 
   def login(%__MODULE__{} = hotspot) do
@@ -69,18 +69,6 @@ defmodule Radius.Auth.Hotspot do
       {:ok, :ok} -> {:ok, hotspot}
       {:ok, {:error, reason}} -> {:error, reason}
       {:error, reason} -> {:error, reason}
-    end
-  end
-
-  def extend_expiration(customer, new_expire_on) do
-    query =
-      from(r in Radcheck,
-        where: r.customer == ^customer
-      )
-
-    case Repo.update_all(query, set: [expire_on: new_expire_on]) do
-      {0, _} -> {:error, :customer_session_not_found}
-      {_, _} -> {:ok, :ok}
     end
   end
 

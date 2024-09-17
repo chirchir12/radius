@@ -31,6 +31,12 @@ defmodule Radius.Auth.Ppoe do
     |> validate_inclusion(:service, ["ppoe"])
   end
 
+  def extend_session_changeset(hotspot, attrs) do
+    hotspot
+    |> cast(attrs, [:customer, :duration_mins, :service])
+    |> validate_required([:customer, :duration_mins, :service])
+  end
+
   def login(%__MODULE__{} = ppoe) do
     credentials = %{
       username: ppoe.username,

@@ -150,8 +150,9 @@ defmodule Radius.AuthTest do
       # Extend the session
 
       extend_attrs = %{
-        customer: initial_attrs.customer,
-        duration_mins: 10
+        "customer" => initial_attrs.customer,
+        "duration_mins" => 10,
+        "service" => "hotspot"
       }
 
       assert {:ok, :ok} = Auth.extend_session(extend_attrs)
@@ -159,8 +160,9 @@ defmodule Radius.AuthTest do
 
     test "extend_session/1 returns error for non-existent session" do
       non_existent_attrs = %{
-        customer: Ecto.UUID.generate(),
-        duration_mins: 5
+        "customer" => Ecto.UUID.generate(),
+        "duration_mins" => 5,
+        "service" => "hotspot"
       }
 
       assert {:error, :customer_session_not_found} = Auth.extend_session(non_existent_attrs)
@@ -168,8 +170,9 @@ defmodule Radius.AuthTest do
 
     test "extend_session/1 returns error for invalid attributes" do
       invalid_attrs = %{
-        customer: nil,
-        duration_mins: nil
+        "customer" => nil,
+        "duration_mins" => nil,
+        "service" => "hotspot"
       }
 
       assert {:error, %Ecto.Changeset{valid?: false}} = Auth.extend_session(invalid_attrs)

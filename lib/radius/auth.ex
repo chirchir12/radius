@@ -1,12 +1,12 @@
 defmodule Radius.Auth do
   import Ecto.Query, warn: false
-  alias Radius.Repo
-  alias Radius.Auth.{Hotspot, Ppoe, Radcheck}
+  alias Radius.Auth.{Hotspot, Ppoe}
   alias Radius.Pipeline.Jobs.SessionSchedular
+  alias Radius.Sessions
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
-         :ok <- check_session_exists(data.customer),
+         :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
            SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
@@ -16,7 +16,7 @@ defmodule Radius.Auth do
 
   def login(:ppoe, attrs) do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
-         :ok <- check_session_exists(data.customer),
+         :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
          {:ok, %Oban.Job{}} <- SessionSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
       {:ok, data}
@@ -31,19 +31,20 @@ defmodule Radius.Auth do
     Ppoe.logout(customer)
   end
 
-  def extend_session(attrs) do
-    changeset = Hotspot.extend_session_changeset(%Hotspot{}, attrs)
-
-    case changeset.valid? do
-      false ->
-        {:error, changeset}
-
-      true ->
-        changes = changeset.changes
-        now = DateTime.utc_now()
-        expire_on = DateTime.add(now, changes.duration_mins * 60, :second)
-        Hotspot.extend_expiration(changes.customer, expire_on)
+  def extend_session(%{
+        "service" => service,
+        "customer" => customer,
+        "duration_mins" => duration_mins
+      })
+      when service in ["hotspot", "ppoe"] do
+    with {:ok, :ok} <- Sessions.extend_session(customer, duration_mins, service) do
+      SessionSchedular.schedule(customer, duration_mins, String.to_atom(service))
+      {:ok, :ok}
     end
+  end
+
+  def extend_session(_attrs) do
+    {:error, :invalid_service}
   end
 
   defp validate_login(%Hotspot{} = hotspot, attrs) do
@@ -101,20 +102,5 @@ defmodule Radius.Auth do
 
         {:ok, data}
     end
-  end
-
-  defp check_session_exists(customer) do
-    case sessions(customer) do
-      {:ok, []} ->
-        :ok
-
-      {:ok, [_ | _]} ->
-        {:error, :session_exists}
-    end
-  end
-
-  defp sessions(customer) do
-    query = from(r in Radcheck, where: r.customer == ^customer)
-    {:ok, Repo.all(query)}
   end
 end
