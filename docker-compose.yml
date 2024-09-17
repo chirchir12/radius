@@ -6,12 +6,13 @@ services:
     build:
       context: ./services/freeradius
       dockerfile: Dockerfile
+    env_file: ".env"
     depends_on:
       db:
         condition: service_healthy
     environment:
       DB_TYPE: "postgresql"
-      DB_SERVER: ${DB_HOST}
+      DB_SERVER: "db"
       DB_PORT: "5432"
       DB_NAME: ${DB_DATABASE}
       DB_USER: ${DB_USERNAME}
@@ -51,6 +52,7 @@ services:
     container_name: diralink-radius-db
     image: postgres:14.13-alpine
     restart: always
+    env_file: ".env"
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
