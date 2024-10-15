@@ -14,7 +14,7 @@ defmodule Radius.Nas.Router do
              :community,
              :description,
              :companyid,
-             :uid
+             :uuid
            ]}
   schema "nas" do
     field :nasname, :string
@@ -26,7 +26,7 @@ defmodule Radius.Nas.Router do
     field :community, :string
     field :description, :string
     field :companyid, :integer, default: nil
-    field :uid, Ecto.UUID
+    field :uuid, Ecto.UUID
   end
 
   def changeset(nas, attrs) do
@@ -41,15 +41,15 @@ defmodule Radius.Nas.Router do
       :community,
       :description,
       :companyid,
-      :uid
+      :uuid
     ])
     |> validate_required([:nasname, :shortname, :type, :secret, :companyid])
     |> generate_uuid()
   end
 
   defp generate_uuid(changeset) do
-    case get_field(changeset, :uid) do
-      nil -> put_change(changeset, :uid, Ecto.UUID.generate())
+    case get_field(changeset, :uuid) do
+      nil -> put_change(changeset, :uuid, Ecto.UUID.generate())
       _ -> changeset
     end
   end

@@ -5,6 +5,11 @@ defmodule RadiusWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/v1/api/system", RadiusWeb do
+    pipe_through [:api]
+    get "/nas", NasController, :index
+  end
+
   scope "/v1/api", RadiusWeb do
     pipe_through :api
 

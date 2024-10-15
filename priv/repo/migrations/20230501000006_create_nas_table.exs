@@ -12,11 +12,11 @@ defmodule Radius.Repo.Migrations.CreateNasTable do
       add :community, :text
       add :description, :text
       add :companyid, :bigint, null: false
-      add :uid, :uuid
+      add :uuid, :uuid, null: false
     end
 
     create index(:nas, [:nasname])
     create index(:nas, [:companyid])
-    create index(:nas, [:uid])
+    create index(:nas, [:uuid])
   end
 end
