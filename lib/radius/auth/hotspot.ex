@@ -10,11 +10,11 @@ defmodule Radius.Auth.Hotspot do
   embedded_schema do
     field :username, :string
     field :password, :string
-    field :customer, :string
+    field :customer, Ecto.UUID
     field :service, :string, default: "hotspot"
     field :duration_mins, :integer
     field :expire_on, :utc_datetime
-    field :plan, :string
+    field :plan, Ecto.UUID
     field :priority, :integer, default: 0
   end
 

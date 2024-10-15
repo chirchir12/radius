@@ -9,7 +9,7 @@ defmodule Radius.Auth.Ppoe do
   embedded_schema do
     field :username, :string
     field :password, :string
-    field :customer, :string
+    field :customer, Ecto.UUID
     field :service, :string, default: "ppoe"
     field :duration_mins, :integer
     field :expire_on, :naive_datetime
