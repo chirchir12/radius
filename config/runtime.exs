@@ -17,19 +17,6 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 
-# config for rmq session publisher
-config :radius, Radius.Rmq.SessionPublisher,
-  url: System.get_env("RMQ_URL") || raise("RMQ_URL environment variable is missing"),
-  exchange:
-    System.get_env("RMQ_SESSION_EXCHANGE") ||
-      raise("RMQ_SESSION_EXCHANGE environment variable is missing"),
-  hotspot_sessions_queue:
-    System.get_env("RMQ_HOTSPOT_SESSIONS_QUEUE") ||
-      raise("RMQ_HOTSPOT_SESSIONS_QUEUE environment variable is missing"),
-  ppoe_sessions_queue:
-    System.get_env("RMQ_PPOE_SESSIONS_QUEUE") ||
-      raise("RMQ_PPOE_SESSIONS_QUEUE environment variable is missing")
-
 if System.get_env("PHX_SERVER") do
   config :radius, RadiusWeb.Endpoint, server: true
 end
@@ -128,4 +115,15 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  # rmq
+  # MAIN EXCHANGE
+  exchange_name =
+    System.get_env("RMQ_DIRALINK_EXCHANGE") || raise("RMQ_DIRALINK_EXCHANGE is missing")
+
+  connection = System.get_env("RMQ_URL") || raise("RMQ_URL environment variable is missing")
+
+  config :radius, Radius.RmqPublisher,
+    url: connection,
+    exchange: exchange_name
 end
