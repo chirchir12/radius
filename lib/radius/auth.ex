@@ -3,6 +3,7 @@ defmodule Radius.Auth do
   alias Radius.Auth.{Hotspot, Ppoe}
   alias Radius.Pipeline.Jobs.SessionSchedular
   alias Radius.Sessions
+  alias Radius.RmqPublisher
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
@@ -10,6 +11,7 @@ defmodule Radius.Auth do
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
            SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
+            :ok = maybe_publish_to_rmq(data, "session_activated", "hotspot")
       {:ok, data}
     end
   end
@@ -102,5 +104,19 @@ defmodule Radius.Auth do
 
         {:ok, data}
     end
+  end
+
+  defp maybe_publish_to_rmq(data, action, service) when service == "hotspot" do
+    queue = System.get_env("RMQ_HOTSPOT_SUBSCRIPTION_QUEUE") || "rmq_hotspot_subscription_queue"
+
+    data = %{
+      action: action,
+      expires_at: data.expire_on,
+      customer_id: data.customer,
+      plan_id: data.plan
+    }
+
+    {:ok, _} = RmqPublisher.publish(data, queue)
+    :ok
   end
 end
