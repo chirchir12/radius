@@ -1,15 +1,14 @@
 defmodule Radius.Helper do
   alias Radius.Auth.Radcheck
 
-  def format_data(data) when is_list(data) do
-    Enum.map(data, &format_data/1)
+  def format_session_data(data, action) when is_list(data) do
+    Enum.map(data,  &format_session_data(&1, action))
   end
 
-  def format_data(%Radcheck{} = data) do
+  def format_session_data(%Radcheck{} = data, action) do
     %{
-      username: data.username,
-      customer: data.customer,
-      service: data.service
+      customer_id: data.customer,
+      action: action
     }
   end
 

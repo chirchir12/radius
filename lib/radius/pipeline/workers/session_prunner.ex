@@ -43,7 +43,7 @@ defmodule Radius.Pipeline.Workers.SessionPrunner do
     sessions
     |> get_hotspot_sessions()
     |> Enum.uniq_by(& &1.customer)
-    |> format_data()
+    |> format_session_data("session_expired")
     |> RmqPublisher.publish(queue)
 
     sessions
@@ -54,7 +54,7 @@ defmodule Radius.Pipeline.Workers.SessionPrunner do
     sessions
     |> get_ppoe_sessions()
     |> Enum.uniq_by(& &1.customer)
-    |> format_data()
+    |> format_session_data("session_expired")
     |> RmqPublisher.publish(queue)
   end
 end

@@ -21,7 +21,7 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
       {:ok, sessions} ->
         Logger.info("Pruning Hotspot Sessions for #{customer_id}")
         sessions
-        |> format_data()
+        |> format_session_data("session_expired")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
@@ -38,7 +38,7 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
 
         sessions
         |> Enum.uniq_by(& &1.customer)
-        |> format_data()
+        |> format_session_data("session_expired")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
