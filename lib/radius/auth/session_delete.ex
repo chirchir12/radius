@@ -16,14 +16,14 @@ defmodule Radius.Auth.SessionDelete do
   end
 
   defp run_task("hotspot", customer_id) do
-    queue = System.get_env("RMQ_HOTSPOT_SUBSCRIPTION_QUEUE") || "rmq_hotspot_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
 
     case Sessions.fetch_expired_session(customer_id, "hotspot") do
       {:ok, sessions} ->
         Logger.info("Pruning Hotspot Sessions for #{customer_id}")
 
         sessions
-        |> format_session_data("session_expired")
+        |> format_session_data("session_expired", "hotspot")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
@@ -33,7 +33,7 @@ defmodule Radius.Auth.SessionDelete do
   end
 
   defp run_task("ppoe", customer_id) do
-    queue = System.get_env("RMQ_PPOE_SUBSCRIPTION_QUEUE") || "rmq_ppoe_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
 
     case Sessions.fetch_expired_session(customer_id, "ppoe") do
       {:ok, sessions} ->
@@ -41,7 +41,7 @@ defmodule Radius.Auth.SessionDelete do
 
         sessions
         |> Enum.uniq_by(& &1.customer)
-        |> format_session_data("session_expired")
+        |> format_session_data("session_expired", "ppoe")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
