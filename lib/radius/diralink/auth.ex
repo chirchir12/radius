@@ -14,13 +14,11 @@ defmodule Radius.Diralink.Auth do
     decode(jwt_string, is_system)
   end
 
-
   defp decode(jwt_string, is_system)
 
   defp decode(jwt_string, is_system) when is_system == true do
     signer = get_config(:system_secret)
     verify_token(jwt_string, signer)
-
   end
 
   defp decode(jwt_string, is_system) when is_system == false do

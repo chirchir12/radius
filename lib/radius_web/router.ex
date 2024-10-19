@@ -5,13 +5,21 @@ defmodule RadiusWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :is_system do
+    plug RadiusWeb.IsSystemPlug
+  end
+
+  pipeline :ensure_authenticated do
+    plug RadiusWeb.EnsureAuthenticatedPlug
+  end
+
   scope "/v1/api/system", RadiusWeb do
-    pipe_through [:api]
+    pipe_through [:api, :is_system, :ensure_authenticated]
     get "/nas", NasController, :index
   end
 
   scope "/v1/api", RadiusWeb do
-    pipe_through :api
+    pipe_through [:api, :ensure_authenticated]
 
     # Hotspot Policy routes
     post "/policies/hotspot", PolicyController, :create_hotspot

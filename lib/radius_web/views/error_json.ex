@@ -1,4 +1,8 @@
 defmodule RadiusWeb.ErrorJSON do
+
+  def render("401.json", %{error: error}) do
+    %{errors: error}
+  end
   def render("422.json", %{error: error}) do
     %{errors: error}
   end

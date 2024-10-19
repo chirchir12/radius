@@ -47,7 +47,7 @@ defmodule Radius.MixProject do
       {:bandit, "~> 1.2"},
       {:oban, "~> 2.17"},
       {:gen_rmq, "~> 4.0"},
-      {:joken, "~> 2.6"},
+      {:joken, "~> 2.6"}
     ]
   end
 
