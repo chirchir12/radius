@@ -17,12 +17,12 @@ defmodule Radius.Diralink.Auth do
   defp decode(jwt_string, is_system)
 
   defp decode(jwt_string, is_system) when is_system == true do
-    signer = get_config(:system_secret)
+    signer = get_signer(:system_secret)
     verify_token(jwt_string, signer)
   end
 
   defp decode(jwt_string, is_system) when is_system == false do
-    signer = get_config(:users_secret)
+    signer = get_signer(:users_secret)
     verify_token(jwt_string, signer)
   end
 
@@ -33,7 +33,7 @@ defmodule Radius.Diralink.Auth do
     end
   end
 
-  defp get_config(key_type) do
+  defp get_signer(key_type) do
     :radius
     |> Application.get_env(__MODULE__)
     |> kw_to_map()
