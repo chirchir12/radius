@@ -127,8 +127,8 @@ defmodule Radius.Policies do
     {:ok, Repo.all(query)}
   end
 
-  def handle_policy_changes(type, params) do
-    handle_change(type, params)
+  def handle_policy_changes(%{service: service} = params) when service in ["hotspot", "ppoe"] do
+    handle_change(String.to_atom(service), params)
   end
 
   defp handle_change(type, %{action: "create"} = params) do

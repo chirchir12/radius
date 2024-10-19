@@ -12,7 +12,7 @@ defmodule Radius.Application do
       Radius.Repo,
       {Oban, Application.fetch_env!(:radius, Oban)},
       Radius.RmqPublisher,
-      Radius.RmqConsumers.HotspotsPlansConsumer,
+      Radius.RmqConsumers.PlanConsumer,
       Radius.RmqConsumers.SubscriptionConsumer,
       {DNSCluster, query: Application.get_env(:radius, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Radius.PubSub},

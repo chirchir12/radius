@@ -1,4 +1,4 @@
-defmodule Radius.RmqConsumers.HotspotsPlansConsumer do
+defmodule Radius.RmqConsumers.PlanConsumer do
   @behaviour GenRMQ.Consumer
   alias GenRMQ.Message
   require Logger
@@ -37,7 +37,7 @@ defmodule Radius.RmqConsumers.HotspotsPlansConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- Policies.handle_policy_changes(:hotspot, payload) do
+    with :ok <- Policies.handle_policy_changes(payload) do
       ack(message)
     end
   end
@@ -54,7 +54,7 @@ defmodule Radius.RmqConsumers.HotspotsPlansConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-hotspot-plans-consumer"
+    "#{hostname}-plans-consumer"
   end
 
   defp get_options() do
