@@ -4,6 +4,7 @@ defmodule Radius.Auth do
   alias Radius.TaskSchedular
   alias Radius.Sessions
   alias Radius.RmqPublisher
+  require Logger
 
   def login(:hotspot, attrs) do
     with {:ok, data} <- validate_login(%Hotspot{}, attrs),
@@ -120,4 +121,18 @@ defmodule Radius.Auth do
     {:ok, _} = RmqPublisher.publish(data, queue)
     :ok
   end
+
+  def handle_auth_change(%{service: service} = params) when service in ["hotspot", "ppoe"] do
+    handle_auth(service, params )
+  end
+
+  def handle_auth_change(params) do
+    :ok = Logger.error("could not start session for customer: #{inspect(params)}")
+    :ok
+  end
+
+  def handle_auth(service, %{action: "session_activate"} = params) do
+    login(String.to_atom(service), params )
+  end
+
 end

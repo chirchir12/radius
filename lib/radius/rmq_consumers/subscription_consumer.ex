@@ -2,7 +2,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
   @behaviour GenRMQ.Consumer
   alias GenRMQ.Message
   require Logger
-  alias Radius.Policies
+  alias Radius.Auth
   import Radius.Helper
 
   def start_link() do
@@ -37,7 +37,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- Policies.handle_policy_changes(:hotspot, payload) do
+    with :ok <- Auth.handle_auth_change(payload) do
       ack(message)
     end
   end
