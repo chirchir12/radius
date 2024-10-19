@@ -61,7 +61,6 @@ defmodule Radius.Nas do
   def delete_router(%Router{} = router) do
     Repo.delete(router)
     |> handle_router_response("delete")
-
   end
 
   defp is_uuid?(string) do
@@ -75,6 +74,7 @@ defmodule Radius.Nas do
     :ok = maybe_publish_to_rmq(router, action)
     {:ok, router}
   end
+
   defp handle_router_response({:error, error}, _action) do
     {:error, error}
   end

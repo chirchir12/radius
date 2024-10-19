@@ -1,5 +1,5 @@
 defmodule Radius.Pipeline.Workers.SubscriptionWorker do
-   @moduledoc """
+  @moduledoc """
   DELETE EXPIRED SESSION/SUBSCRIPTION AND NOTIFY AIRLINK SERVICE
   """
   use Oban.Worker, queue: :clear_individual_internet_sessions, max_attempts: 5
@@ -17,9 +17,11 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
 
   defp run_task("hotspot", customer_id) do
     queue = System.get_env("RMQ_HOTSPOT_SUBSCRIPTION_QUEUE") || "rmq_hotspot_subscription_queue"
+
     case Sessions.fetch_expired_session(customer_id, "hotspot") do
       {:ok, sessions} ->
         Logger.info("Pruning Hotspot Sessions for #{customer_id}")
+
         sessions
         |> format_session_data("session_expired")
         |> RmqPublisher.publish(queue)
@@ -32,6 +34,7 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
 
   defp run_task("ppoe", customer_id) do
     queue = System.get_env("RMQ_PPOE_SUBSCRIPTION_QUEUE") || "rmq_ppoe_subscription_queue"
+
     case Sessions.fetch_expired_session(customer_id, "ppoe") do
       {:ok, sessions} ->
         Logger.info("Pruning PPOE Sessions for #{customer_id}")
@@ -46,5 +49,4 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
         :ok
     end
   end
-
 end

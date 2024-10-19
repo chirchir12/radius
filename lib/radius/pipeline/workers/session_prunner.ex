@@ -40,6 +40,7 @@ defmodule Radius.Pipeline.Workers.SessionPrunner do
 
   def publish_to_hotspot(sessions) do
     queue = System.get_env("RMQ_HOTSPOT_SUBSCRIPTION_QUEUE") || "rmq_hotspot_subscription_queue"
+
     sessions
     |> get_hotspot_sessions()
     |> Enum.uniq_by(& &1.customer)
@@ -51,6 +52,7 @@ defmodule Radius.Pipeline.Workers.SessionPrunner do
 
   def publish_to_ppoe(sessions) do
     queue = System.get_env("RMQ_PPOE_SUBSCRIPTION_QUEUE") || "rmq_ppoe_subscription_queue"
+
     sessions
     |> get_ppoe_sessions()
     |> Enum.uniq_by(& &1.customer)

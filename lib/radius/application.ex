@@ -11,10 +11,7 @@ defmodule Radius.Application do
       RadiusWeb.Telemetry,
       Radius.Repo,
       {Oban, Application.fetch_env!(:radius, Oban)},
-      %{
-        id: Radius.RmqPublisher,
-        start: {Radius.RmqPublisher, :start_link, []}
-      },
+      Radius.RmqPublisher,
       {DNSCluster, query: Application.get_env(:radius, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Radius.PubSub},
       # Start the Finch HTTP client for sending emails

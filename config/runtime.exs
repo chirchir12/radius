@@ -115,15 +115,15 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
-
-  # rmq
-  # MAIN EXCHANGE
-  exchange_name =
-    System.get_env("RMQ_DIRALINK_EXCHANGE") || raise("RMQ_DIRALINK_EXCHANGE is missing")
-
-  connection = System.get_env("RMQ_URL") || raise("RMQ_URL environment variable is missing")
-
-  config :radius, Radius.RmqPublisher,
-    url: connection,
-    exchange: exchange_name
 end
+
+# rmq
+# MAIN EXCHANGE
+exchange_name =
+  System.get_env("RMQ_DIRALINK_EXCHANGE") || raise("RMQ_DIRALINK_EXCHANGE is missing")
+
+connection = System.get_env("RMQ_URL") || raise("RMQ_URL environment variable is missing")
+
+config :radius, Radius.RmqPublisher,
+  url: connection,
+  exchange: exchange_name

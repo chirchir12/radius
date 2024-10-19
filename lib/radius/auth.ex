@@ -11,7 +11,7 @@ defmodule Radius.Auth do
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
            SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
-            :ok = maybe_publish_to_rmq(data, "session_activated", "hotspot")
+      :ok = maybe_publish_to_rmq(data, "session_activated", "hotspot")
       {:ok, data}
     end
   end
