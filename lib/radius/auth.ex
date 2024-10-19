@@ -1,7 +1,7 @@
 defmodule Radius.Auth do
   import Ecto.Query, warn: false
   alias Radius.Auth.{Hotspot, Ppoe}
-  alias Radius.Pipeline.Jobs.SessionSchedular
+  alias Radius.TaskSchedular
   alias Radius.Sessions
   alias Radius.RmqPublisher
 
@@ -10,7 +10,7 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
-           SessionSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
+          TaskSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
       :ok = maybe_publish_to_rmq(data, "session_activated", "hotspot")
       {:ok, data}
     end
@@ -20,7 +20,7 @@ defmodule Radius.Auth do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
-         {:ok, %Oban.Job{}} <- SessionSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
+         {:ok, %Oban.Job{}} <- TaskSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
       {:ok, data}
     end
   end
@@ -40,7 +40,7 @@ defmodule Radius.Auth do
       })
       when service in ["hotspot", "ppoe"] do
     with {:ok, :ok} <- Sessions.extend_session(customer, duration_mins, service) do
-      SessionSchedular.schedule(customer, duration_mins, String.to_atom(service))
+      TaskSchedular.schedule(customer, duration_mins, String.to_atom(service))
       {:ok, :ok}
     end
   end

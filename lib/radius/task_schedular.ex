@@ -1,4 +1,4 @@
-defmodule Radius.Pipeline.Jobs.SessionSchedular do
+defmodule Radius.TaskSchedular do
   alias Oban
   require Logger
 
@@ -11,4 +11,5 @@ defmodule Radius.Pipeline.Jobs.SessionSchedular do
     |> Oban.Job.new(queue: queue, worker: worker, schedule_in: in_mins * 60)
     |> Oban.insert()
   end
+
 end
