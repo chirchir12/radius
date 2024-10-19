@@ -132,6 +132,19 @@ exchange_name =
 
 connection = System.get_env("RMQ_URL") || raise("RMQ_URL environment variable is missing")
 
+# main publisher
 config :radius, Radius.RmqPublisher,
   url: connection,
   exchange: exchange_name
+
+# plans/packages consumer
+config :airlink, Radius.RmqConsumers.HotspotsPlansConsumer,
+  connection: connection,
+  exchange: exchange_name,
+  queue:
+    System.get_env("RMQ_HOTSPOT_PLAN_QUEUE") ||
+      raise("RMQ_HOTSPOT_PLAN_QUEUE environment variable is missing"),
+  prefetch_count: 10,
+  routing_key:
+    System.get_env("RMQ_HOTSPOT_PLAN_QUEUE") ||
+      raise("RMQ_HOTSPOT_PLAN_QUEUE environment variable is missing")

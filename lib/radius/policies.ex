@@ -4,7 +4,7 @@ defmodule Radius.Policies do
   import Ecto.Query
   alias Radius.Repo
 
-  def add(:hotspot, attrs) do
+  def add_policy(:hotspot, attrs) do
     with {:ok, %Hotspot{} = data} <- hotspot_policy(attrs),
          :ok <- check_policy_exists(data.plan),
          {:ok, :ok} <- Hotspot.add_policies(data) do
@@ -12,7 +12,7 @@ defmodule Radius.Policies do
     end
   end
 
-  def add(:ppoe, attrs) do
+  def add_policy(:ppoe, attrs) do
     with {:ok, %Ppoe{} = data} <- ppoe_policy(attrs),
          :ok <- check_policy_exists(data.plan),
          {:ok, :ok} <- Ppoe.add_policies(data) do
@@ -20,27 +20,27 @@ defmodule Radius.Policies do
     end
   end
 
-  def update(:hotspot, attrs) do
+  def update_policy(:hotspot, attrs) do
     with {:ok, %Hotspot{} = data} <- hotspot_policy(attrs),
          {:ok, :ok} <- Hotspot.update_policies(data) do
       {:ok, :ok}
     end
   end
 
-  def update(:ppoe, attrs) do
+  def update_policy(:ppoe, attrs) do
     with {:ok, %Ppoe{} = data} <- ppoe_policy(attrs),
          {:ok, :ok} <- Ppoe.update_policies(data) do
       {:ok, :ok}
     end
   end
 
-  def delete(:hotspot, plan) do
+  def delete_policy(:hotspot, plan) do
     with {:ok, :ok} <- Hotspot.delete_policies(plan) do
       {:ok, :ok}
     end
   end
 
-  def delete(:ppoe, plan) do
+  def delete_policy(:ppoe, plan) do
     with {:ok, :ok} <- Ppoe.delete_policies(plan) do
       {:ok, :ok}
     end
@@ -125,5 +125,24 @@ defmodule Radius.Policies do
       )
 
     {:ok, Repo.all(query)}
+  end
+
+  def handle_policy_changes(type, params) do
+    handle_change(type, params)
+  end
+
+  defp handle_change(type, %{action: "create"} = params) do
+    {:ok, _policy} = add_policy(type, params)
+    :ok
+  end
+
+  defp handle_change(type, %{action: "update"} = params) do
+    {:ok, _policy} = update_policy(type, params)
+    :ok
+  end
+
+  defp handle_change(type, %{action: "delete", plan: plan}) do
+    {:ok, _policy} = delete_policy(type, plan)
+    :ok
   end
 end
