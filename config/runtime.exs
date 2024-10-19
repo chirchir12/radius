@@ -137,7 +137,7 @@ config :radius, Radius.RmqPublisher,
   url: connection,
   exchange: exchange_name
 
-# plans/packages consumer
+# hotspot plans/packages consumer
 config :radius, Radius.RmqConsumers.HotspotsPlansConsumer,
   connection: connection,
   exchange: exchange_name,
@@ -152,3 +152,19 @@ config :radius, Radius.RmqConsumers.HotspotsPlansConsumer,
   routing_key:
     System.get_env("RMQ_HOTSPOT_PLAN_QUEUE") ||
       raise("RMQ_HOTSPOT_PLAN_QUEUE environment variable is missing")
+
+# subscriptions
+config :radius, Radius.RmqConsumers.SubscriptionConsumer,
+  connection: connection,
+  exchange: exchange_name,
+  deadletter: false,
+  queue_options: [
+    durable: true
+  ],
+  queue:
+    System.get_env("RMQ_SUBSCRIPTION_QUEUE") ||
+      raise("RMQ_SUBSCRIPTION_QUEUE environment variable is missing"),
+  prefetch_count: "10",
+  routing_key:
+    System.get_env("RMQ_SUBSCRIPTION_QUEUE") ||
+      raise("RMQ_SUBSCRIPTION_QUEUE environment variable is missing")
