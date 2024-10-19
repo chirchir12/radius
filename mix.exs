@@ -46,7 +46,8 @@ defmodule Radius.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:oban, "~> 2.17"},
-      {:gen_rmq, "~> 4.0"}
+      {:gen_rmq, "~> 4.0"},
+      {:joken, "~> 2.6"},
     ]
   end
 

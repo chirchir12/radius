@@ -15,4 +15,20 @@ defmodule Radius.Helper do
   def encode_data(data) do
     Jason.encode!(data)
   end
+
+  def kw_to_map(data) when is_list(data) do
+    if Keyword.keyword?(data) do
+      data
+      |> Enum.map(fn
+        {key, value} when is_list(value) -> {key, kw_to_map(value)}
+        {key, value} -> {key, value}
+        other -> other
+      end)
+      |> Enum.into(%{})
+    else
+      data
+    end
+  end
+
+  def kw_to_map(data), do: data
 end

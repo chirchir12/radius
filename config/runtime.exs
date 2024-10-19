@@ -117,6 +117,13 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
+# auth
+system_secret = System.get_env("SYSTEM_AUTH_SECRET") || raise("SYSTEM_AUTH_SECRET is not set")
+users_secret = System.get_env("AUTH_SECRET") || raise("AUTH_SECRET is not set")
+config :radius, Radius.Diralink.Auth,
+  system_secret: Joken.Signer.create("HS512", system_secret),
+  users_secret: Joken.Signer.create("HS512", users_secret)
+
 # rmq
 # MAIN EXCHANGE
 exchange_name =
