@@ -3,6 +3,7 @@ defmodule RadiusWeb.AuthController do
 
   alias Radius.{Auth, Auth.Hotspot, Auth.Ppoe}
 
+  plug RadiusWeb.CheckRolesPlug, ["%", "admin"]
   action_fallback RadiusWeb.FallbackController
 
   def hotspot_login(conn, %{"auth" => params}) do

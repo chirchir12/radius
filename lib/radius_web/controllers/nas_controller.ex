@@ -2,6 +2,7 @@ defmodule RadiusWeb.NasController do
   use RadiusWeb, :controller
 
   alias Radius.Nas
+  plug RadiusWeb.CheckRolesPlug, ["%", "admin", "system"]
 
   action_fallback RadiusWeb.FallbackController
 

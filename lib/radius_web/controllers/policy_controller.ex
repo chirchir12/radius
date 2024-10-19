@@ -3,6 +3,7 @@ defmodule RadiusWeb.PolicyController do
 
   alias Radius.Policies
 
+  plug RadiusWeb.CheckRolesPlug, ["%", "admin"]
   action_fallback RadiusWeb.FallbackController
 
   # Hotspot actions
