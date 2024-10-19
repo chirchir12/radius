@@ -138,13 +138,17 @@ config :radius, Radius.RmqPublisher,
   exchange: exchange_name
 
 # plans/packages consumer
-config :airlink, Radius.RmqConsumers.HotspotsPlansConsumer,
+config :radius, Radius.RmqConsumers.HotspotsPlansConsumer,
   connection: connection,
   exchange: exchange_name,
+  deadletter: false,
+  queue_options: [
+    durable: true
+  ],
   queue:
     System.get_env("RMQ_HOTSPOT_PLAN_QUEUE") ||
       raise("RMQ_HOTSPOT_PLAN_QUEUE environment variable is missing"),
-  prefetch_count: 10,
+  prefetch_count: "10",
   routing_key:
     System.get_env("RMQ_HOTSPOT_PLAN_QUEUE") ||
       raise("RMQ_HOTSPOT_PLAN_QUEUE environment variable is missing")

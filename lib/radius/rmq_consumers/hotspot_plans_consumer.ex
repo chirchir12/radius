@@ -9,6 +9,13 @@ defmodule Radius.RmqConsumers.HotspotsPlansConsumer do
     GenRMQ.Consumer.start_link(__MODULE__, name: __MODULE__)
   end
 
+  def child_spec(_arg) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []}
+    }
+  end
+
   def ack(%Message{attributes: %{delivery_tag: tag}} = message) do
     Logger.debug("Message successfully processed. Tag: #{tag}")
     GenRMQ.Consumer.ack(message)
@@ -47,11 +54,11 @@ defmodule Radius.RmqConsumers.HotspotsPlansConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-hotspot-plains-consumer"
+    "#{hostname}-hotspot-plans-consumer"
   end
 
   defp get_options() do
-    :airlink
+    :radius
     |> Application.get_env(__MODULE__)
   end
 
