@@ -1,4 +1,4 @@
-defmodule Radius.Pipeline.Workers.SubscriptionWorker do
+defmodule Radius.Auth.SessionDelete do
   @moduledoc """
   DELETE EXPIRED SESSION/SUBSCRIPTION AND NOTIFY AIRLINK SERVICE
   """
@@ -49,4 +49,5 @@ defmodule Radius.Pipeline.Workers.SubscriptionWorker do
         :ok
     end
   end
+
 end

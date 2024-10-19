@@ -1,4 +1,4 @@
-defmodule Radius.Pipeline.Workers.SessionPrunner do
+defmodule Radius.Auth.SessionDeleteAll do
   use Oban.Worker, queue: :clear_all_internet_sessions, max_attempts: 5
 
   import Radius.Helper
@@ -59,4 +59,5 @@ defmodule Radius.Pipeline.Workers.SessionPrunner do
     |> format_session_data("session_expired")
     |> RmqPublisher.publish(queue)
   end
+
 end

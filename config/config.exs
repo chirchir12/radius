@@ -46,7 +46,7 @@ config :radius, Oban,
     {Oban.Plugins.Pruner, max_age: 300},
     {Oban.Plugins.Cron,
      crontab: [
-       {"*/5 * * * *", Radius.Pipeline.Workers.SessionPrunner, args: %{check_after_in_mins: 5}}
+       {"*/5 * * * *", Radius.Auth.SessionDeleteAll, args: %{check_after_in_mins: 5}}
      ]}
   ],
   queues: [

@@ -4,7 +4,7 @@ defmodule Radius.TaskSchedular do
 
   def schedule(customer, in_mins, service_type) do
     queue = :clear_individual_internet_sessions
-    worker = Radius.Pipeline.Workers.SubscriptionWorker
+    worker = Radius.Auth.SessionDelete
     Logger.info("Scheduling #{service_type} Sessions for customer #{customer}")
 
     %{customer: customer, prune_after: in_mins * 60, service_type: service_type}
