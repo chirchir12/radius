@@ -14,9 +14,9 @@ services:
       DB_TYPE: "postgresql"
       DB_SERVER: "db"
       DB_PORT: "5432"
-      DB_NAME: ${DB_DATABASE}
-      DB_USER: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${RADIUS_DB_DATABASE}
+      DB_USER: ${RADIUS_DB_USERNAME}
+      DB_PASSWORD: ${RADIUS_DB_PASSWORD}
     networks:
       - backend
       - diralink_net
@@ -54,9 +54,9 @@ services:
     restart: always
     env_file: ".env"
     environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${RADIUS_DB_USERNAME}
+      POSTGRES_PASSWORD: ${RADIUS_DB_PASSWORD}
+      POSTGRES_DB: ${RADIUS_DB_DATABASE}
     networks:
       - backend
       - diralink_net
@@ -65,7 +65,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${RADIUS_DB_USERNAME} -d ${RADIUS_DB_DATABASE}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5

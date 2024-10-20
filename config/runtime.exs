@@ -17,15 +17,15 @@ import Config
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 
-if System.get_env("PHX_SERVER") do
+if System.get_env("RADIUS_PHX_SERVER") do
   config :radius, RadiusWeb.Endpoint, server: true
 end
 
 if config_env() == :prod do
   database_url =
-    System.get_env("DATABASE_URL") ||
+    System.get_env("RADIUS_DATABASE_URL") ||
       raise """
-      environment variable DATABASE_URL is missing.
+      environment variable RADIUS_DATABASE_URL is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
@@ -43,14 +43,14 @@ if config_env() == :prod do
   # to check this value into version control, so we use an environment
   # variable instead.
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
+    System.get_env("RADIUS_SECRET_KEY_BASE") ||
       raise """
-      environment variable SECRET_KEY_BASE is missing.
+      environment variable RADIUS_SECRET_KEY_BASE is missing.
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  host = System.get_env("RADIUS_PHX_HOST") || "example.com"
+  port = String.to_integer(System.get_env("RADIUS_PORT") || "4000")
 
   config :radius, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -118,8 +118,8 @@ if config_env() == :prod do
 end
 
 # auth
-system_secret = System.get_env("SYSTEM_AUTH_SECRET") || raise("SYSTEM_AUTH_SECRET is not set")
-users_secret = System.get_env("AUTH_SECRET") || raise("AUTH_SECRET is not set")
+system_secret = System.get_env("RADIUS_SYSTEM_AUTH_SECRET") || raise("RADIUS_SYSTEM_AUTH_SECRET is not set")
+users_secret = System.get_env("RADIUS_AUTH_SECRET") || raise("RADIUS_AUTH_SECRET is not set")
 
 config :radius, Radius.Diralink.Auth,
   system_secret: Joken.Signer.create("HS512", system_secret),
