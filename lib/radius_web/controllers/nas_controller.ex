@@ -26,7 +26,7 @@ defmodule RadiusWeb.NasController do
 
   def show(conn, %{"id" => id}) do
     with {:ok, router} <- Nas.get_router(id) do
-      render(conn, "show_router.json", router: router)
+      render(conn, :show, router: router)
     end
   end
 
@@ -34,14 +34,14 @@ defmodule RadiusWeb.NasController do
     with {:ok, router} <- Nas.create_router(router_params) do
       conn
       |> put_status(:created)
-      |> render("show_router.json", router: router)
+      |> render(:show, router: router)
     end
   end
 
   def update(conn, %{"id" => id, "router" => router_params}) do
     with {:ok, router} <- Nas.get_router(id),
          {:ok, updated_router} <- Nas.update_router(router, router_params) do
-      render(conn, "show_router.json", router: updated_router)
+      render(conn, :show, router: updated_router)
     end
   end
 
