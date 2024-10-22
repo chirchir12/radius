@@ -32,7 +32,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  radius_backend:
+  radius:
     build:
       context: .
       dockerfile: Dockerfile
