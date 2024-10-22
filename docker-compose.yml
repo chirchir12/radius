@@ -61,7 +61,7 @@ services:
       - backend
       - diralink_net
     ports:
-      - "54322:5432"
+      - "5400:5432"
     volumes:
       - postgres_radius_data:/var/lib/postgresql/data
     healthcheck:
