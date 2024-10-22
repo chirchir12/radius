@@ -1,18 +1,18 @@
-name: diralink
+name: radius
 services:
   freeradius:
-    container_name: diralink-radius
+    container_name: freeradius
     restart: always
     build:
       context: ./services/freeradius
       dockerfile: Dockerfile
     env_file: ".env"
     depends_on:
-      db:
+      radius_db:
         condition: service_healthy
     environment:
       DB_TYPE: "postgresql"
-      DB_SERVER: "db"
+      DB_SERVER: "radius_db"
       DB_PORT: "5432"
       DB_NAME: ${RADIUS_DB_DATABASE}
       DB_USER: ${RADIUS_DB_USERNAME}
@@ -32,7 +32,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-  backend:
+  radius_backend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -45,11 +45,11 @@ services:
       - backend
       - diralink_net
     depends_on:
-      - db
+      - radius_db
     # Add other app-specific configurations here
 
-  db:
-    container_name: diralink-radius-db
+  radius_db:
+    container_name: radius_db
     image: postgres:14.13-alpine
     restart: always
     env_file: ".env"
