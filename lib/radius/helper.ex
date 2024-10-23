@@ -32,6 +32,11 @@ defmodule Radius.Helper do
     end
   end
   def kw_to_map(data), do: data
+
+  def atomize_map_keys(data) when is_list(data) do
+    data
+    |> Enum.map(&atomize_map_keys/1)
+  end
   def atomize_map_keys(map) when is_map(map) do
     map
     |> Enum.map(fn {k, v} -> {atomize_key(k), atomize_value(v)} end)
