@@ -162,8 +162,8 @@ config :radius, Radius.RmqConsumers.SubscriptionConsumer,
     durable: true
   ],
   queue:
-    System.get_env("RMQ_SUBSCRIPTION_QUEUE") ||
-      raise("RMQ_SUBSCRIPTION_QUEUE environment variable is missing"),
+    System.get_env("RMQ_RADIUS_SUBSCRIPTION_CONSUMER") ||
+      raise("RMQ_RADIUS_SUBSCRIPTION_CONSUMER environment variable is missing"),
   prefetch_count: "10",
   routing_key:
     System.get_env("RMQ_SUBSCRIPTION_QUEUE") ||
