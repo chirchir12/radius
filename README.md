@@ -1,18 +1,20 @@
 # Radius
 
-To start your Phoenix server:
+Service to handle authentication and authorization of Internet Users
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Functionalities
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+1. create network policies
+2. activate and deactivate users
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Environment Configuration
 
-## Learn more
+### Message Queues Configuration
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+| Queue Name/Consumer          | Routing Key             | Description                        |
+| ---------------------------- | ----------------------- | ---------------------------------- |
+| radius_plan_consumer         | rmq_plan_changes_rk     | Handle plan/packages notifications |
+| radius_subscription_consumer | subscription_changes_rk | Internet Subscription notification |
+|                              | router_changes_rk       | notifications for router changes   |
+
+###

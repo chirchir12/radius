@@ -146,12 +146,12 @@ config :radius, Radius.RmqConsumers.PlanConsumer,
     durable: true
   ],
   queue:
-    System.get_env("RMQ_PLAN_QUEUE") ||
-      raise("RMQ_PLAN_QUEUE environment variable is missing"),
+    System.get_env("RMQ_RADIUS_PLAN_CONSUMER") ||
+      raise("RMQ_RADIUS_PLAN_CONSUMER environment variable is missing"),
   prefetch_count: "10",
   routing_key:
-    System.get_env("RMQ_PLAN_QUEUE") ||
-      raise("RMQ_PLAN_QUEUE environment variable is missing")
+    System.get_env("RMQ_PLAN_ROUTING_KEY") ||
+      raise("RMQ_PLAN_ROUTING_KEY environment variable is missing")
 
 # subscriptions
 config :radius, Radius.RmqConsumers.SubscriptionConsumer,
@@ -166,5 +166,5 @@ config :radius, Radius.RmqConsumers.SubscriptionConsumer,
       raise("RMQ_RADIUS_SUBSCRIPTION_CONSUMER environment variable is missing"),
   prefetch_count: "10",
   routing_key:
-    System.get_env("RMQ_SUBSCRIPTION_QUEUE") ||
-      raise("RMQ_SUBSCRIPTION_QUEUE environment variable is missing")
+    System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") ||
+      raise("RMQ_SUBSCRIPTION_ROUTING_KEY environment variable is missing")

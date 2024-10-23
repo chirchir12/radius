@@ -80,7 +80,7 @@ defmodule Radius.Nas do
   end
 
   defp maybe_publish_to_rmq(%Router{} = router, action) do
-    queue = System.get_env("RMQ_ROUTER_QUEUE") || "rmq_router_queue"
+    queue = System.get_env("RMQ_ROUTER_ROUTING_KEY") || "router_changes_rk"
 
     data =
       %{
