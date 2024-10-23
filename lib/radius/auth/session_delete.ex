@@ -16,7 +16,7 @@ defmodule Radius.Auth.SessionDelete do
   end
 
   defp run_task("hotspot", customer_id) do
-    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     case Sessions.fetch_expired_session(customer_id, "hotspot") do
       {:ok, sessions} ->
@@ -33,7 +33,7 @@ defmodule Radius.Auth.SessionDelete do
   end
 
   defp run_task("ppoe", customer_id) do
-    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     case Sessions.fetch_expired_session(customer_id, "ppoe") do
       {:ok, sessions} ->

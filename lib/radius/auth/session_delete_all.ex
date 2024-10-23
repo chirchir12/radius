@@ -39,7 +39,7 @@ defmodule Radius.Auth.SessionDeleteAll do
   end
 
   def publish_to_hotspot(sessions) do
-    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     sessions
     |> get_hotspot_sessions()
@@ -51,7 +51,7 @@ defmodule Radius.Auth.SessionDeleteAll do
   end
 
   def publish_to_ppoe(sessions) do
-    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     sessions
     |> get_ppoe_sessions()
