@@ -108,7 +108,7 @@ defmodule Radius.Auth do
   end
 
   defp maybe_publish_to_rmq(data, action, service) when service == "hotspot" do
-    queue = System.get_env("RMQ_SUBSCRIPTION_QUEUE") || "rmq_subscription_queue"
+    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     data = %{
       action: action,
