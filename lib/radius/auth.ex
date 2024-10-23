@@ -119,6 +119,7 @@ defmodule Radius.Auth do
     }
 
     {:ok, _} = RmqPublisher.publish(data, queue)
+    Logger.info("Published #{action} to #{queue}")
     :ok
   end
 
