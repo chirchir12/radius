@@ -17,7 +17,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
   end
 
   def ack(%Message{attributes: %{delivery_tag: tag}} = message) do
-    Logger.debug("Message successfully processed. Tag: #{tag}")
+    Logger.info("Message successfully processed. Tag: #{tag}")
     GenRMQ.Consumer.ack(message)
   end
 
