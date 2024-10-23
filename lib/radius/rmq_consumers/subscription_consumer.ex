@@ -37,7 +37,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- process_message(payload) do
+    with :ok <- process_message(payload, &Auth.handle_auth_change/1) do
       ack(message)
     end
   end
@@ -57,20 +57,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
     "#{hostname}-subscriptions-consumer"
   end
 
-  # Private
-  defp process_message(params) when is_list(params) do
-    params
-    |> Enum.map(&atomize_map_keys/1)
-    |> Enum.each(&process_message/1)
-  end
 
-  defp process_message(%{sender: "radius"}) do
-    :ok
-  end
-
-  defp process_message(params) do
-    Auth.handle_auth_change(params)
-  end
 
   defp get_options() do
     :radius

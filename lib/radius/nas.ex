@@ -95,7 +95,8 @@ defmodule Radius.Nas do
         description: router.description,
         companyid: router.companyid,
         uuid: router.uuid,
-        action: action
+        action: action,
+        sender: :radius
       }
 
     {:ok, _} = RmqPublisher.publish(data, queue)

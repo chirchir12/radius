@@ -9,7 +9,8 @@ defmodule Radius.Helper do
     %{
       customer_id: data.customer,
       action: action,
-      service: service_type
+      service: service_type,
+      sender: :radius
     }
   end
 
@@ -36,6 +37,21 @@ defmodule Radius.Helper do
     |> Enum.map(fn {k, v} -> {atomize_key(k), atomize_value(v)} end)
     |> Enum.into(%{})
   end
+
+  def process_message(params, func) when is_list(params) do
+    params
+    |> Enum.map(&atomize_map_keys/1)
+    |> Enum.each(&process_message(&1, func))
+  end
+
+  def process_message(%{sender: "radius"}, _func) do
+    :ok
+  end
+
+  def process_message(params, func) when is_function(func, 1) do
+    func.(params)
+  end
+
 
   defp atomize_key(key) when is_binary(key), do: String.to_atom(key)
   defp atomize_key(key) when is_atom(key), do: key

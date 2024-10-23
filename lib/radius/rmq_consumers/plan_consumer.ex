@@ -37,7 +37,7 @@ defmodule Radius.RmqConsumers.PlanConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- Policies.handle_policy_changes(payload) do
+    with :ok <- process_message(payload, &Policies.handle_policy_changes/1) do
       ack(message)
     end
   end
