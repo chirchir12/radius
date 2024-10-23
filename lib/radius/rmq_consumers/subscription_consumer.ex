@@ -37,9 +37,8 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- process_message(payload, &Auth.handle_auth_change/1) do
+   _ =  process_message(payload, &Auth.handle_auth_change/1)
       ack(message)
-    end
   end
 
   @impl GenRMQ.Consumer
