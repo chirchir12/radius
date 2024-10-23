@@ -134,11 +134,13 @@ defmodule Radius.Auth do
   end
 
   def handle_auth(service, %{action: "session_activate"} = params) do
-    login(String.to_atom(service), params )
+    with {:ok, _data}<- login(String.to_atom(service), params ) do
+      :ok
+    end
   end
 
   def handle_auth(_service, _params) do
-    {:ok, :ok}
+    :ok
   end
 
 end
