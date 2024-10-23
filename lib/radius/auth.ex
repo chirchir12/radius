@@ -115,7 +115,8 @@ defmodule Radius.Auth do
       expires_at: data.expire_on,
       customer_id: data.customer,
       plan_id: data.plan,
-      service: "hotspot"
+      service: "hotspot",
+      sender: :radius
     }
 
     {:ok, _} = RmqPublisher.publish(data, queue)
@@ -134,6 +135,10 @@ defmodule Radius.Auth do
 
   def handle_auth(service, %{action: "session_activate"} = params) do
     login(String.to_atom(service), params )
+  end
+
+  def handle_auth(_service, _params) do
+    {:ok, :ok}
   end
 
 end
