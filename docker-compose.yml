@@ -27,11 +27,11 @@ services:
     volumes:
       - "./services/freeradius/config/freeradius:/etc/freeradius"
       - "./services/freeradius/logs:/var/log/freeradius"
-    healthcheck:
-      test: ["CMD", "radtest", "user", "pass", "localhost", "0", "testing123"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    # healthcheck:
+    #   test: ["CMD", "radtest", "user", "pass", "localhost", "0", "testing123"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
   radius:
     build:
       context: .
