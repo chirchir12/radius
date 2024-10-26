@@ -45,7 +45,7 @@ defmodule Radius.Auth.Hotspot do
     check = %{
       username: hotspot.username,
       attribute: "Cleartext-Password",
-      op: "==",
+      op: ":=",
       value: hotspot.password,
       customer: hotspot.customer,
       service: "hotspot",
