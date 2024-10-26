@@ -32,12 +32,12 @@ defmodule Radius.Repo.Migrations.CreateRadacctTable do
     create unique_index(:radacct, [:acctuniqueid])
 
     create index(:radacct, [:acctuniqueid],
-             where: "acct_stop_time IS NULL",
+             where: "acctstoptime IS NULL",
              name: :radacct_active_session_idx
            )
 
     create index(:radacct, [:nasipaddress, :acctstarttime],
-             where: "acct_stop_time IS NULL",
+             where: "acctstoptime IS NULL",
              name: :radacct_bulk_close
            )
 
