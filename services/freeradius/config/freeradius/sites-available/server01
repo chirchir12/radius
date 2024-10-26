@@ -49,15 +49,12 @@ listen {
 
 authorize {
 	filter_username
-	filter_password
 	preprocess
 	chap
 	mschap
 	suffix
 	
 	sql
-	expiration
-	logintime
 	pap
 
 }
