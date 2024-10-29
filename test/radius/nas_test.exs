@@ -6,7 +6,7 @@ defmodule Radius.NasTest do
 
   describe "routers" do
     @valid_attrs %{
-      company_id: 42,
+      company_id: Ecto.UUID.generate(),
       nasname: "some nasname",
       shortname: "some shortname",
       type: "some type",
@@ -17,7 +17,7 @@ defmodule Radius.NasTest do
       description: "some description"
     }
     @update_attrs %{
-      company_id: 43,
+      company_id: Ecto.UUID.generate(),
       nasname: "updated nasname",
       shortname: "updated shortname",
       type: "updated type",

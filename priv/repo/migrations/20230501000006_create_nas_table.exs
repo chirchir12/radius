@@ -11,7 +11,7 @@ defmodule Radius.Repo.Migrations.CreateNasTable do
       add :server, :text
       add :community, :text
       add :description, :text
-      add :company_id, :bigint, null: false
+      add :company_id, :uuid, null: false
       add :uuid, :uuid, null: false
     end
 
