@@ -19,7 +19,7 @@ defmodule RadiusWeb.NasJSON do
       server: router.secret,
       community: router.community,
       description: router.description,
-      company_id: router.companyid,
+      company_id: router.company_id,
       router_id: router.uuid
     }
   end

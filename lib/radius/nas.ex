@@ -5,7 +5,7 @@ defmodule Radius.Nas do
   alias Radius.RmqPublisher
 
   def list_routers(company_id) when is_integer(company_id) do
-    {:ok, Repo.all(from r in Router, where: r.companyid == ^company_id)}
+    {:ok, Repo.all(from r in Router, where: r.company_id == ^company_id)}
   end
 
   def list_routers(company) do
@@ -93,7 +93,7 @@ defmodule Radius.Nas do
         server: router.server,
         community: router.community,
         description: router.description,
-        companyid: router.companyid,
+        company_id: router.company_id,
         uuid: router.uuid,
         action: action,
         sender: :radius

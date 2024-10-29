@@ -13,7 +13,7 @@ defmodule Radius.Nas.Router do
              :server,
              :community,
              :description,
-             :companyid,
+             :company_id,
              :uuid
            ]}
   schema "nas" do
@@ -25,7 +25,7 @@ defmodule Radius.Nas.Router do
     field :server, :string
     field :community, :string
     field :description, :string
-    field :companyid, :integer, default: nil
+    field :company_id, Ecto.UUID
     field :uuid, Ecto.UUID
   end
 
@@ -40,10 +40,10 @@ defmodule Radius.Nas.Router do
       :server,
       :community,
       :description,
-      :companyid,
+      :company_id,
       :uuid
     ])
-    |> validate_required([:nasname, :shortname, :type, :secret, :companyid])
+    |> validate_required([:nasname, :shortname, :type, :secret, :company_id])
     |> generate_uuid()
   end
 

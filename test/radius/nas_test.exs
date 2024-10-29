@@ -6,7 +6,7 @@ defmodule Radius.NasTest do
 
   describe "routers" do
     @valid_attrs %{
-      companyid: 42,
+      company_id: 42,
       nasname: "some nasname",
       shortname: "some shortname",
       type: "some type",
@@ -17,7 +17,7 @@ defmodule Radius.NasTest do
       description: "some description"
     }
     @update_attrs %{
-      companyid: 43,
+      company_id: 43,
       nasname: "updated nasname",
       shortname: "updated shortname",
       type: "updated type",
@@ -28,7 +28,7 @@ defmodule Radius.NasTest do
       description: "updated description"
     }
     @invalid_attrs %{
-      companyid: nil,
+      company_id: nil,
       nasname: nil,
       shortname: nil,
       type: nil,
@@ -55,7 +55,7 @@ defmodule Radius.NasTest do
 
     test "list_routers/1 returns routers for a specific company" do
       router1 = router_fixture()
-      router2 = router_fixture(%{companyid: 99})
+      router2 = router_fixture(%{company_id: 99})
 
       assert Nas.list_routers(42) == {:ok, [router1]}
       assert Nas.list_routers(99) == {:ok, [router2]}
@@ -72,7 +72,7 @@ defmodule Radius.NasTest do
 
     test "create_router/1 with valid data creates a router" do
       assert {:ok, %Router{} = router} = Nas.create_router(@valid_attrs)
-      assert router.companyid == 42
+      assert router.company_id == 42
       assert router.nasname == "some nasname"
       assert router.shortname == "some shortname"
       assert router.type == "some type"
@@ -90,7 +90,7 @@ defmodule Radius.NasTest do
     test "update_router/2 with valid data updates the router" do
       router = router_fixture()
       assert {:ok, %Router{} = updated_router} = Nas.update_router(router, @update_attrs)
-      assert updated_router.companyid == 43
+      assert updated_router.company_id == 43
       assert updated_router.nasname == "updated nasname"
       assert updated_router.shortname == "updated shortname"
       assert updated_router.type == "updated type"
