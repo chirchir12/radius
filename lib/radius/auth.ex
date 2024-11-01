@@ -99,7 +99,7 @@ defmodule Radius.Auth do
             customer: changes.customer,
             service: "ppoe",
             expire_on: expire_on,
-            profile: changes.profile,
+            plan: changes.plan,
             duration_mins: changes.duration_mins
         }
 

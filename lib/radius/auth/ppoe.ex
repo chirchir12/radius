@@ -13,7 +13,7 @@ defmodule Radius.Auth.Ppoe do
     field :service, :string, default: "ppoe"
     field :duration_mins, :integer
     field :expire_on, :naive_datetime
-    field :profile, :string
+    field :plan, Ecto.UUID
   end
 
   def changeset(ppoe, attrs) do
@@ -25,9 +25,9 @@ defmodule Radius.Auth.Ppoe do
       :service,
       :duration_mins,
       :expire_on,
-      :profile
+      :plan
     ])
-    |> validate_required([:username, :password, :customer, :duration_mins, :profile])
+    |> validate_required([:username, :password, :customer, :duration_mins, :plan])
     |> validate_inclusion(:service, ["ppoe"])
   end
 
@@ -52,7 +52,7 @@ defmodule Radius.Auth.Ppoe do
       username: ppoe.username,
       attribute: "User-Profile",
       op: ":=",
-      value: ppoe.profile,
+      value: ppoe.plan,
       customer: ppoe.customer,
       service: "ppoe",
       expire_on: ppoe.expire_on

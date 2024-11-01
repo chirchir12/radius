@@ -72,7 +72,7 @@ defmodule Radius.Policy.Ppoe do
 
   defp add_group_check_policy(%__MODULE__{} = attrs) do
     policy = %{
-      groupname: attrs.profile,
+      groupname: attrs.plan,
       attribute: "Framed-Protocol",
       op: "==",
       value: "PPP",
@@ -85,7 +85,7 @@ defmodule Radius.Policy.Ppoe do
 
   defp add_user_group(%__MODULE__{} = attrs) do
     user_group = %{
-      username: attrs.profile,
+      username: attrs.plan,
       groupname: attrs.plan,
       plan: attrs.plan,
       priority: attrs.priority,
@@ -140,10 +140,10 @@ defmodule Radius.Policy.Ppoe do
   end
 
   # Helper functions for each update operation
-  defp update_group_check_policy(repo, %{plan: plan, profile: profile}) do
+  defp update_group_check_policy(repo, %{plan: plan}) do
     from(c in Radgroupcheck, where: c.plan == ^plan)
     |> repo.update_all(
-      set: [groupname: profile, attribute: "Framed-Protocol", op: "==", value: "PPP"]
+      set: [groupname: plan, attribute: "Framed-Protocol", op: "==", value: "PPP"]
     )
     |> case do
       {n, nil} when is_integer(n) -> {:ok, n}
@@ -151,9 +151,9 @@ defmodule Radius.Policy.Ppoe do
     end
   end
 
-  defp update_user_group(repo, %{plan: plan, profile: profile, priority: priority}) do
+  defp update_user_group(repo, %{plan: plan, priority: priority}) do
     from(u in Radusergroup, where: u.groupname == ^plan)
-    |> repo.update_all(set: [username: profile, groupname: plan, priority: priority])
+    |> repo.update_all(set: [username: plan, groupname: plan, priority: priority])
     |> case do
       {n, nil} when is_integer(n) -> {:ok, n}
       _ -> {:error, "Failed to update user group"}

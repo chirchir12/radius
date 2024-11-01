@@ -54,7 +54,7 @@ defmodule Radius.RmqConsumers.PlanConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-plans-consumer"
+    "#{hostname}-radius-plans-consumer"
   end
 
   defp get_options() do
