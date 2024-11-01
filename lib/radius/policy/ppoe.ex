@@ -10,7 +10,6 @@ defmodule Radius.Policy.Ppoe do
   embedded_schema do
     field :pool, :string
     field :plan, Ecto.UUID
-    field :profile, :string
     field :upload, :integer
     field :download, :integer
     field :duration, :integer
@@ -19,8 +18,8 @@ defmodule Radius.Policy.Ppoe do
 
   def changeset(ppoe, attrs) do
     ppoe
-    |> cast(attrs, [:pool, :plan, :profile, :upload, :download, :duration, :priority])
-    |> validate_required([:pool, :plan, :profile, :upload, :download, :duration])
+    |> cast(attrs, [:pool, :plan, :upload, :download, :duration, :priority])
+    |> validate_required([:pool, :plan, :upload, :download, :duration])
     |> validate_number(:upload, greater_than: 0)
     |> validate_number(:download, greater_than: 0)
     |> validate_number(:duration, greater_than: 0)
