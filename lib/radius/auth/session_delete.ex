@@ -11,19 +11,19 @@ defmodule Radius.Auth.SessionDelete do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"service_type" => service_type, "customer" => customer_id}}) do
-    service_type
-    |> run_task(customer_id)
-  end
-
-  defp run_task("hotspot", customer_id) do
     queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
+    service_type
+    |> run_task(customer_id, queue)
+  end
+
+  defp run_task("hotspot", customer_id, queue) do
     case Sessions.fetch_expired_session(customer_id, "hotspot") do
       {:ok, sessions} ->
         Logger.info("Pruning Hotspot Sessions for #{customer_id}")
 
         sessions
-        |> format_session_data("session_expired", "hotspot")
+        |> format_session_data("hotspot_session_expired", "hotspot")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
@@ -32,16 +32,14 @@ defmodule Radius.Auth.SessionDelete do
     end
   end
 
-  defp run_task("ppoe", customer_id) do
-    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
-
+  defp run_task("ppoe", customer_id ,queue) do
     case Sessions.fetch_expired_session(customer_id, "ppoe") do
       {:ok, sessions} ->
         Logger.info("Pruning PPOE Sessions for #{customer_id}")
 
         sessions
         |> Enum.uniq_by(& &1.customer)
-        |> format_session_data("session_expired", "ppoe")
+        |> format_session_data("ppoe_session_expired", "ppoe")
         |> RmqPublisher.publish(queue)
 
       {:error, :no_session_to_delete} ->
