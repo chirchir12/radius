@@ -12,7 +12,7 @@ defmodule Radius.Auth do
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
           TaskSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
-      :ok = maybe_publish_to_rmq(data, "session_activated", "hotspot")
+      :ok = maybe_publish_to_rmq(data, "hotspot_session_activated", "hotspot")
       {:ok, data}
     end
   end
@@ -22,7 +22,8 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
          {:ok, %Oban.Job{}} <- TaskSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
-      {:ok, data}
+          :ok = maybe_publish_to_rmq(data, "ppoe_session_activated", "ppoe")
+          {:ok, data}
     end
   end
 
@@ -107,7 +108,7 @@ defmodule Radius.Auth do
     end
   end
 
-  defp maybe_publish_to_rmq(data, action, service) when service == "hotspot" do
+  defp maybe_publish_to_rmq(data, action, service) when service in ["hotspot", "ppoe"] do
     queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
 
     data = %{
@@ -115,7 +116,7 @@ defmodule Radius.Auth do
       expires_at: data.expire_on,
       customer_id: data.customer,
       plan_id: data.plan,
-      service: "hotspot",
+      service: service,
       sender: :radius
     }
 
@@ -137,6 +138,28 @@ defmodule Radius.Auth do
     with {:ok, _data}<- login(String.to_atom(service), params ) do
       :ok
     end
+  end
+
+  def handle_auth(service, %{action: "deactivate_session", customer: customer} ) do
+    with {:ok, _data}<- logout(String.to_atom(service), customer ) do
+      :ok
+    end
+  end
+
+  def handle_auth(service, %{action: "delete_customer", customer: customer} ) do
+    with {:ok, _data}<- logout(String.to_atom(service), customer ) do
+      :ok
+    end
+  end
+
+  def handle_auth("ppoe", %{action: "update_customer_auth"} = params ) do
+      :ok = Ppoe.update_username_password(params)
+      :ok
+  end
+
+  def handle_auth("ppoe", %{action: "change_customer_plan"} = params ) do
+    :ok = Ppoe.update_plan(params)
+    :ok
   end
 
   def handle_auth(_service, _params) do
