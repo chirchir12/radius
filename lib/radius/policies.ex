@@ -84,8 +84,7 @@ defmodule Radius.Policies do
             download: valid_changes.download,
             duration: valid_changes.duration,
             priority: Map.get(valid_changes, :priority, 0),
-            pool: valid_changes.pool,
-            profile: valid_changes.profile
+            pool: valid_changes.pool
         }
 
         {:ok, data}
