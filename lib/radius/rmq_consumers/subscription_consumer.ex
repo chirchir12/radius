@@ -54,7 +54,7 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-subscriptions-consumer"
+    "#{hostname}-radius-subscriptions-consumer"
   end
 
 
