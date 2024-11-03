@@ -1,8 +1,8 @@
-defmodule Radius.RmqConsumers.PlanConsumer do
+defmodule Radius.RmqConsumers.HotspotSubscriptionConsumer do
   @behaviour GenRMQ.Consumer
   alias GenRMQ.Message
   require Logger
-  alias Radius.Policies
+  alias Radius.Auth
   import Radius.Helper
 
   def start_link() do
@@ -17,7 +17,7 @@ defmodule Radius.RmqConsumers.PlanConsumer do
   end
 
   def ack(%Message{attributes: %{delivery_tag: tag}} = message) do
-    Logger.debug("Message successfully processed. Tag: #{tag}")
+    Logger.info("Message successfully processed. Tag: #{tag}")
     GenRMQ.Consumer.ack(message)
   end
 
@@ -37,8 +37,12 @@ defmodule Radius.RmqConsumers.PlanConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- process_message(payload, &Policies.handle_policy_changes/1) do
+    with :ok <- process_message(payload, &handle_hotspot_subscription/1) do
       ack(message)
+    else
+      error ->
+        :ok = Logger.error("Failed to process hotspot message: #{inspect(error)}")
+        reject(message)
     end
   end
 
@@ -54,7 +58,38 @@ defmodule Radius.RmqConsumers.PlanConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-radius-plans-consumer"
+    "#{hostname}-radius-hotspot-subscriptions-consumer"
+  end
+
+  defp handle_hotspot_subscription(%{service: service} = params) when service == "hotspot" do
+    handle_subscription(service, params)
+  end
+
+  defp handle_hotspot_subscription(params) do
+    :ok = Logger.warning("Failed to handle subscriptions: #{inspect(params)}")
+    :ok
+  end
+
+  def handle_subscription(service, %{action: "session_activate"} = params) do
+    with {:ok, _data} <- Auth.login(String.to_atom(service), params) do
+      :ok
+    end
+  end
+
+  def handle_subscription(service, %{action: "deactivate_session", customer: customer}) do
+    with {:ok, _data} <- Auth.logout(String.to_atom(service), customer) do
+      :ok
+    end
+  end
+
+  def handle_subscription(service, %{action: "delete_customer", customer: customer}) do
+    with {:ok, _data} <- Auth.logout(String.to_atom(service), customer) do
+      :ok
+    end
+  end
+
+  def handle_subscription(_service, _params) do
+    :ok
   end
 
   defp get_options() do

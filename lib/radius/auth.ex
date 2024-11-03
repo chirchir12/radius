@@ -3,7 +3,8 @@ defmodule Radius.Auth do
   alias Radius.Auth.{Hotspot, Ppoe}
   alias Radius.TaskSchedular
   alias Radius.Sessions
-  alias Radius.RmqPublisher
+  alias Radius.Hotspot, as: HotspotPub
+  alias Radius.Ppoe, as: PpoePub
   require Logger
 
   def login(:hotspot, attrs) do
@@ -11,8 +12,8 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
-          TaskSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
-      :ok = maybe_publish_to_rmq(data, "hotspot_session_activated", "hotspot")
+           TaskSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
+      :ok = HotspotPub.session_activated(data, "hotspot_session_activated")
       {:ok, data}
     end
   end
@@ -22,8 +23,8 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
          {:ok, %Oban.Job{}} <- TaskSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
-          :ok = maybe_publish_to_rmq(data, "ppoe_session_activated", "ppoe")
-          {:ok, data}
+      :ok = PpoePub.session_activated(data, "ppoe_session_activated")
+      {:ok, data}
     end
   end
 
@@ -107,63 +108,4 @@ defmodule Radius.Auth do
         {:ok, data}
     end
   end
-
-  defp maybe_publish_to_rmq(data, action, service) when service in ["hotspot", "ppoe"] do
-    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
-
-    data = %{
-      action: action,
-      expires_at: data.expire_on,
-      customer_id: data.customer,
-      plan_id: data.plan,
-      service: service,
-      sender: :radius
-    }
-
-    {:ok, _} = RmqPublisher.publish(data, queue)
-    Logger.info("Published #{action} to #{queue}")
-    :ok
-  end
-
-  def handle_auth_change(%{service: service} = params) when service in ["hotspot", "ppoe"] do
-    handle_auth(service, params )
-  end
-
-  def handle_auth_change(params) do
-    :ok = Logger.error("could not start session for customer: #{inspect(params)}")
-    :ok
-  end
-
-  def handle_auth(service, %{action: "session_activate"} = params) do
-    with {:ok, _data}<- login(String.to_atom(service), params ) do
-      :ok
-    end
-  end
-
-  def handle_auth(service, %{action: "deactivate_session", customer: customer} ) do
-    with {:ok, _data}<- logout(String.to_atom(service), customer ) do
-      :ok
-    end
-  end
-
-  def handle_auth(service, %{action: "delete_customer", customer: customer} ) do
-    with {:ok, _data}<- logout(String.to_atom(service), customer ) do
-      :ok
-    end
-  end
-
-  def handle_auth("ppoe", %{action: "update_customer_auth"} = params ) do
-      :ok = Ppoe.update_username_password(params)
-      :ok
-  end
-
-  def handle_auth("ppoe", %{action: "change_customer_plan"} = params ) do
-    :ok = Ppoe.update_plan(params)
-    :ok
-  end
-
-  def handle_auth(_service, _params) do
-    :ok
-  end
-
 end

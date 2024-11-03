@@ -1,5 +1,6 @@
 defmodule RadiusWeb.NasJSON do
   alias Radius.Nas.Router
+
   def index(%{routers: routers}) do
     %{data: for(router <- routers, do: data(router))}
   end

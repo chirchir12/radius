@@ -3,7 +3,8 @@ defmodule Radius.Auth.SessionDeleteAll do
 
   import Radius.Helper
   alias Radius.Sessions
-  alias Radius.RmqPublisher
+  alias Radius.Hotspot, as: HotspotPub
+  alias Radius.Ppoe, as: PpoePub
   require Logger
 
   @impl Oban.Worker
@@ -13,15 +14,13 @@ defmodule Radius.Auth.SessionDeleteAll do
       }) do
     Logger.info("Pruning All dead sessions")
 
-    queue = System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") || "subscription_changes_rk"
-
     case Sessions.fetch_expired_sessions_after(in_mins) do
       {:ok, sessions} ->
-        publish_to_hotspot(sessions, queue)
+        publish_to_hotspot(sessions)
         |> Sessions.get_customer_ids()
         |> Sessions.delete_user_group()
 
-        publish_to_ppoe(sessions, queue)
+        publish_to_ppoe(sessions)
         :ok
 
       {:error, :no_session_to_delete} ->
@@ -40,22 +39,21 @@ defmodule Radius.Auth.SessionDeleteAll do
     |> Enum.filter(fn session -> session.service == "ppoe" end)
   end
 
-  def publish_to_hotspot(sessions ,queue) do
+  def publish_to_hotspot(sessions) do
     sessions
     |> get_hotspot_sessions()
     |> Enum.uniq_by(& &1.customer)
     |> format_session_data("hotspot_session_expired", "hotspot")
-    |> RmqPublisher.publish(queue)
+    |> HotspotPub.session_expired()
 
     sessions
   end
 
-  def publish_to_ppoe(sessions, queue) do
+  def publish_to_ppoe(sessions) do
     sessions
     |> get_ppoe_sessions()
     |> Enum.uniq_by(& &1.customer)
     |> format_session_data("ppoe_session_expired", "ppoe")
-    |> RmqPublisher.publish(queue)
+    |> PpoePub.session_expired()
   end
-
 end

@@ -11,5 +11,4 @@ defmodule Radius.TaskSchedular do
     |> Oban.Job.new(queue: queue, worker: worker, schedule_in: in_mins * 60)
     |> Oban.insert()
   end
-
 end

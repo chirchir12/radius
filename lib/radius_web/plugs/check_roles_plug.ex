@@ -18,15 +18,14 @@ defmodule RadiusWeb.CheckRolesPlug do
 
   defp handle_error(conn) do
     conn
-        |> put_status(:forbidden)
-        |> put_view(json: RadiusWeb.ErrorJSON)
-        |> render(:"403",
-          error: %{
-            status: :forbidden,
-            reason: "Resource forbidden, not enough roles"
-          }
-        )
-        |> halt()
+    |> put_status(:forbidden)
+    |> put_view(json: RadiusWeb.ErrorJSON)
+    |> render(:"403",
+      error: %{
+        status: :forbidden,
+        reason: "Resource forbidden, not enough roles"
+      }
+    )
+    |> halt()
   end
-
 end

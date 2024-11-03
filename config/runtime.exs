@@ -118,7 +118,9 @@ if config_env() == :prod do
 end
 
 # auth
-system_secret = System.get_env("RADIUS_SYSTEM_AUTH_SECRET") || raise("RADIUS_SYSTEM_AUTH_SECRET is not set")
+system_secret =
+  System.get_env("RADIUS_SYSTEM_AUTH_SECRET") || raise("RADIUS_SYSTEM_AUTH_SECRET is not set")
+
 users_secret = System.get_env("RADIUS_AUTH_SECRET") || raise("RADIUS_AUTH_SECRET is not set")
 
 config :radius, Radius.Diralink.Auth,
@@ -137,7 +139,7 @@ config :radius, Radius.RmqPublisher,
   url: connection,
   exchange: exchange_name
 
-# hotspot plans/packages consumer
+# packages consumer
 config :radius, Radius.RmqConsumers.PlanConsumer,
   connection: connection,
   exchange: exchange_name,
@@ -153,8 +155,8 @@ config :radius, Radius.RmqConsumers.PlanConsumer,
     System.get_env("RMQ_PLAN_ROUTING_KEY") ||
       raise("RMQ_PLAN_ROUTING_KEY environment variable is missing")
 
-# subscriptions
-config :radius, Radius.RmqConsumers.SubscriptionConsumer,
+# hotspot subscriptions
+config :radius, Radius.RmqConsumers.HotspotSubscriptionConsumer,
   connection: connection,
   exchange: exchange_name,
   deadletter: false,
@@ -162,9 +164,25 @@ config :radius, Radius.RmqConsumers.SubscriptionConsumer,
     durable: true
   ],
   queue:
-    System.get_env("RMQ_RADIUS_SUBSCRIPTION_CONSUMER") ||
-      raise("RMQ_RADIUS_SUBSCRIPTION_CONSUMER environment variable is missing"),
+    System.get_env("RMQ_RADIUS_HOTSPOT_SUBSCRIPTION_CONSUMER") ||
+      raise("RMQ_RADIUS_HOTSPOT_SUBSCRIPTION_CONSUMER environment variable is missing"),
   prefetch_count: "10",
   routing_key:
-    System.get_env("RMQ_SUBSCRIPTION_ROUTING_KEY") ||
-      raise("RMQ_SUBSCRIPTION_ROUTING_KEY environment variable is missing")
+    System.get_env("RMQ_HOTSPOT_SUBSCRIPTION_ROUTING_KEY") ||
+      raise("RMQ_HOTSPOT_SUBSCRIPTION_ROUTING_KEY environment variable is missing")
+
+# ppoe subscriptions
+config :radius, Radius.RmqConsumers.PpoeSubscriptionConsumer,
+  connection: connection,
+  exchange: exchange_name,
+  deadletter: false,
+  queue_options: [
+    durable: true
+  ],
+  queue:
+    System.get_env("RMQ_RADIUS_PPOE_SUBSCRIPTION_CONSUMER") ||
+      raise("RMQ_RADIUS_PPOE_SUBSCRIPTION_CONSUMER environment variable is missing"),
+  prefetch_count: "10",
+  routing_key:
+    System.get_env("RMQ_PPOE_SUBSCRIPTION_ROUTING_KEY") ||
+      raise("RMQ_PPOE_SUBSCRIPTION_ROUTING_KEY environment variable is missing")

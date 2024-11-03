@@ -1,8 +1,9 @@
-defmodule Radius.RmqConsumers.SubscriptionConsumer do
+defmodule Radius.RmqConsumers.PpoeSubscriptionConsumer do
   @behaviour GenRMQ.Consumer
   alias GenRMQ.Message
   require Logger
   alias Radius.Auth
+  alias Radius.Auth.Ppoe
   import Radius.Helper
 
   def start_link() do
@@ -37,8 +38,12 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
     Logger.info("Received message: #{inspect(message)}")
     payload = Jason.decode!(payload) |> atomize_map_keys()
 
-    with :ok <- process_message(payload, &Auth.handle_auth_change/1) do
+    with :ok <- process_message(payload, &handle_subscription_change/1) do
       ack(message)
+    else
+      error ->
+        :ok = Logger.error("Failed to process ppoe message: #{inspect(error)}")
+        reject(message)
     end
   end
 
@@ -54,14 +59,52 @@ defmodule Radius.RmqConsumers.SubscriptionConsumer do
   @impl GenRMQ.Consumer
   def consumer_tag() do
     {:ok, hostname} = :inet.gethostname()
-    "#{hostname}-radius-subscriptions-consumer"
+    "#{hostname}-radius-ppoe-subscriptions-consumer"
   end
 
+  def handle_subscription_change(%{service: service} = params) when service == "ppoe" do
+    handle_subscription(params)
+  end
 
+  def handle_subscription_change(params) do
+    :ok = Logger.warning("Failed to handle subscriptions: #{inspect(params)}")
+    :ok
+  end
+
+  def handle_subscription(%{action: "session_activate"} = params) do
+    with {:ok, _data} <- Auth.login(:ppoe, params) do
+      :ok
+    end
+  end
+
+  def handle_subscription(%{action: "deactivate_session", customer: customer}) do
+    with {:ok, _data} <- Auth.logout(:ppoe, customer) do
+      :ok
+    end
+  end
+
+  def handle_subscription(%{action: "delete_customer", customer: customer}) do
+    with {:ok, _data} <- Auth.logout(:ppoe, customer) do
+      :ok
+    end
+  end
+
+  def handle_subscription(%{action: "update_customer_auth"} = params) do
+    :ok = Ppoe.update_username_password(params)
+    :ok
+  end
+
+  def handle_subscription(%{action: "change_customer_plan"} = params) do
+    :ok = Ppoe.update_plan(params)
+    :ok
+  end
+
+  def handle_subscription(_service, _params) do
+    :ok
+  end
 
   defp get_options() do
     :radius
     |> Application.get_env(__MODULE__)
   end
-
 end
