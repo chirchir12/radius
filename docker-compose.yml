@@ -46,6 +46,8 @@ services:
       - diralink_net
     depends_on:
       - radius_db
+    volumes:
+      - "/tmp/radius:/tmp/radius"
     # Add other app-specific configurations here
 
   radius_db:
