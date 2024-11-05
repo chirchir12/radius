@@ -31,3 +31,5 @@ radius-*.tar
 /postgres_data
 .env
 *.log
+
+migration_scripts
