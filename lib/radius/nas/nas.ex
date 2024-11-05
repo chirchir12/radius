@@ -32,6 +32,7 @@ defmodule Radius.Nas.Router do
   def changeset(nas, attrs) do
     nas
     |> cast(attrs, [
+      :id,
       :nasname,
       :shortname,
       :type,
@@ -44,6 +45,7 @@ defmodule Radius.Nas.Router do
       :uuid
     ])
     |> validate_required([:nasname, :shortname, :type, :secret, :company_id])
+    |> unique_constraint(:id, name: "nas_pkey")
     |> generate_uuid()
   end
 
