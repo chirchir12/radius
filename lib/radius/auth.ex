@@ -63,7 +63,19 @@ defmodule Radius.Auth do
         changes = changeset.changes
         now = DateTime.utc_now()
         # -5 seconds to avoid race condition
-        expire_on = DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+        expires_on = case Map.get(changes, :expires_on ) do
+          nil ->
+            DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+          _ -> Map.get(changes, :expires_on )
+        end
+
+        duration_in_mins = case Map.get(changes, :expires_on ) do
+          nil ->
+            changes.duration_mins
+          _ ->
+            DateTime.diff(expires_on, now, :second) |> div(60)
+        end
+
 
         data = %{
           hotspot
@@ -71,10 +83,10 @@ defmodule Radius.Auth do
             password: changes.password,
             customer: changes.customer,
             service: "hotspot",
-            expire_on: expire_on,
+            expire_on: expires_on,
             plan: changes.plan,
             priority: Map.get(changes, :priority, 10),
-            duration_mins: changes.duration_mins
+            duration_mins: duration_in_mins
         }
 
         {:ok, data}
@@ -91,8 +103,18 @@ defmodule Radius.Auth do
       true ->
         changes = changeset.changes
         now = DateTime.utc_now()
-        # -5 seconds to avoid race condition
-        expire_on = DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+        expires_on = case Map.get(changes, :expires_on ) do
+          nil ->
+            DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+          _ -> Map.get(changes, :expires_on )
+        end
+
+        duration_in_mins = case Map.get(changes, :expires_on ) do
+          nil ->
+            changes.duration_mins
+          _ ->
+            DateTime.diff(expires_on, now, :second) |> div(60)
+        end
 
         data = %{
           ppoe
@@ -100,9 +122,9 @@ defmodule Radius.Auth do
             password: changes.password,
             customer: changes.customer,
             service: "ppoe",
-            expire_on: expire_on,
+            expire_on: expires_on,
             plan: changes.plan,
-            duration_mins: changes.duration_mins
+            duration_mins: duration_in_mins
         }
 
         {:ok, data}

@@ -12,7 +12,7 @@ defmodule Radius.Auth.Ppoe do
     field :customer, Ecto.UUID
     field :service, :string, default: "ppoe"
     field :duration_mins, :integer
-    field :expire_on, :naive_datetime
+    field :expire_on, :utc_datetime
     field :plan, Ecto.UUID
   end
 
