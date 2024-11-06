@@ -41,8 +41,7 @@ defmodule Radius.RmqConsumers.HotspotSubscriptionConsumer do
       ack(message)
     else
       error ->
-        :ok = Logger.error("Failed to process hotspot message: #{inspect(error)}")
-        reject(message)
+        handle_hotspot_error(error, message)
     end
   end
 
@@ -92,8 +91,19 @@ defmodule Radius.RmqConsumers.HotspotSubscriptionConsumer do
     :ok
   end
 
+
   defp get_options() do
     :radius
     |> Application.get_env(__MODULE__)
+  end
+
+  defp handle_hotspot_error({:error, :session_exists}, message) do
+    :ok = Logger.warning("Session exists")
+    ack(message)
+  end
+
+  defp handle_hotspot_error(error, message) do
+    :ok = Logger.error("Failed to process hotspot message: #{inspect(error)}")
+    reject(message)
   end
 end
