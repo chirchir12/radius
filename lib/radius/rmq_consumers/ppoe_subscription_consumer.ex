@@ -71,7 +71,7 @@ defmodule Radius.RmqConsumers.PpoeSubscriptionConsumer do
     :ok
   end
 
-  def handle_subscription(%{action: "session_activate"} = params) do
+  def handle_subscription(%{action: "activate_session"} = params) do
     with {:ok, _data} <- Auth.login(:ppoe, params) do
       :ok
     end
