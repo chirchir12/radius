@@ -5,11 +5,20 @@ defmodule Radius.Helper do
     Enum.map(data, &format_session_data(&1, action, service_type))
   end
 
-  def format_session_data(%Radcheck{} = data, action, service_type) do
+  def format_session_data(%Radcheck{} = data, action, "hotspot") do
     %{
       customer_id: data.customer,
       action: action,
-      service: service_type,
+      service: "hotspot",
+      sender: :radius
+    }
+  end
+
+  def format_session_data(%Radcheck{} = data, action, "ppoe") do
+    %{
+      subscription_uuid: data.customer,
+      action: action,
+      service: "ppoe",
       sender: :radius
     }
   end

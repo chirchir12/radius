@@ -10,7 +10,7 @@ defmodule Radius.Ppoe do
     data = %{
       action: action,
       expires_at: params.expire_on,
-      customer_id: params.customer,
+      subscription_uuid: params.subscription_uuid,
       plan_id: params.plan,
       service: "ppoe",
       sender: :radius

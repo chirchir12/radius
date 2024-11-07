@@ -32,11 +32,19 @@ defmodule Radius.Sessions do
     end
   end
 
-  def extend_session(customer, duration_mins, service) do
-    attrs = %{"customer" => customer, "duration_mins" => duration_mins, "service" => service}
+  def extend_session(customer, duration_mins, "ppoe") do
+    %{"customer" => customer, "duration_mins" => duration_mins, "service" => "ppoe"}
+    |> extend_session()
+  end
 
+  def extend_session(customer, duration_mins, "hotspot") do
+    %{"customer" => customer, "duration_mins" => duration_mins, "service" => "hotspot"}
+    |> extend_session()
+  end
+
+  def extend_session(attrs) do
     changeset =
-      case service do
+      case Map.get(attrs, "service") do
         "hotspot" ->
           Hotspot.extend_session_changeset(%Hotspot{}, attrs)
 

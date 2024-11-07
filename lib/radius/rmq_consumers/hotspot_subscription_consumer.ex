@@ -91,7 +91,6 @@ defmodule Radius.RmqConsumers.HotspotSubscriptionConsumer do
     :ok
   end
 
-
   defp get_options() do
     :radius
     |> Application.get_env(__MODULE__)

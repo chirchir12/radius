@@ -9,7 +9,7 @@ defmodule Radius.Auth.Ppoe do
   embedded_schema do
     field :username, :string
     field :password, :string
-    field :customer, Ecto.UUID
+    field :subscription_uuid, Ecto.UUID
     field :service, :string, default: "ppoe"
     field :duration_mins, :integer
     field :expire_on, :utc_datetime
@@ -21,20 +21,20 @@ defmodule Radius.Auth.Ppoe do
     |> cast(attrs, [
       :username,
       :password,
-      :customer,
+      :subscription_uuid,
       :service,
       :duration_mins,
       :expire_on,
       :plan
     ])
-    |> validate_required([:username, :password, :customer, :duration_mins, :plan])
+    |> validate_required([:username, :password, :subscription_uuid, :duration_mins, :plan])
     |> validate_inclusion(:service, ["ppoe"])
   end
 
   def extend_session_changeset(hotspot, attrs) do
     hotspot
-    |> cast(attrs, [:customer, :duration_mins, :service])
-    |> validate_required([:customer, :duration_mins, :service])
+    |> cast(attrs, [:subscription_uuid, :duration_mins, :service])
+    |> validate_required([:subscription_uuid, :duration_mins, :service])
   end
 
   def login(%__MODULE__{} = ppoe) do
@@ -43,7 +43,7 @@ defmodule Radius.Auth.Ppoe do
       attribute: "Cleartext-Password",
       op: ":=",
       value: ppoe.password,
-      customer: ppoe.customer,
+      customer: ppoe.subscription_uuid,
       service: "ppoe",
       expire_on: ppoe.expire_on
     }
@@ -53,7 +53,7 @@ defmodule Radius.Auth.Ppoe do
       attribute: "User-Profile",
       op: ":=",
       value: ppoe.plan,
-      customer: ppoe.customer,
+      customer: ppoe.subscription_uuid,
       service: "ppoe",
       expire_on: ppoe.expire_on
     }
@@ -77,8 +77,8 @@ defmodule Radius.Auth.Ppoe do
     end
   end
 
-  def logout(customer) do
-    query = from(r in Radcheck, where: r.customer == ^customer)
+  def logout(subscription_uuid) do
+    query = from(r in Radcheck, where: r.customer == ^subscription_uuid)
 
     case Repo.delete_all(query) do
       {0, nil} ->
@@ -92,20 +92,24 @@ defmodule Radius.Auth.Ppoe do
     end
   end
 
-  def update_username_password(%{customer: customer, username: username, password: password}) do
+  def update_username_password(%{
+        subscription_uuid: subscription_uuid,
+        username: username,
+        password: password
+      }) do
     query =
       from rc in Radcheck,
-        where: rc.customer == ^customer and rc.attribute == "Cleartext-Password",
+        where: rc.customer == ^subscription_uuid and rc.attribute == "Cleartext-Password",
         update: [set: [username: ^username, value: ^password]]
 
     _ = Repo.update_all(query, [])
     :ok
   end
 
-  def update_plan(%{customer: customer, username: username, plan: plan}) do
+  def update_plan(%{subscription_uuid: subscription_uuid, username: username, plan: plan}) do
     query =
       from rc in Radcheck,
-        where: rc.customer == ^customer and rc.attribute == "User-Profile",
+        where: rc.customer == ^subscription_uuid and rc.attribute == "User-Profile",
         update: [set: [username: ^username, value: ^plan]]
 
     _ = Repo.update_all(query, [])

@@ -22,7 +22,8 @@ defmodule Radius.Auth do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
-         {:ok, %Oban.Job{}} <- TaskSchedular.schedule(data.customer, data.duration_mins, :ppoe) do
+         {:ok, %Oban.Job{}} <-
+           TaskSchedular.schedule(data.subscription_uuid, data.duration_mins, :ppoe) do
       :ok = PpoePub.session_activated(data, "ppoe_session_activated")
       {:ok, data}
     end
@@ -32,8 +33,8 @@ defmodule Radius.Auth do
     Hotspot.logout(customer)
   end
 
-  def logout(:ppoe, customer) do
-    Ppoe.logout(customer)
+  def logout(:ppoe, subscription_uuid) do
+    Ppoe.logout(subscription_uuid)
   end
 
   def extend_session(%{
@@ -63,19 +64,23 @@ defmodule Radius.Auth do
         changes = changeset.changes
         now = DateTime.utc_now()
         # -5 seconds to avoid race condition
-        expires_on = case Map.get(changes, :expires_on ) do
-          nil ->
-            DateTime.add(now, changes.duration_mins * 60 - 5, :second)
-          _ -> Map.get(changes, :expires_on )
-        end
+        expires_on =
+          case Map.get(changes, :expires_on) do
+            nil ->
+              DateTime.add(now, changes.duration_mins * 60 - 5, :second)
 
-        duration_in_mins = case Map.get(changes, :expires_on ) do
-          nil ->
-            changes.duration_mins
-          _ ->
-            DateTime.diff(expires_on, now, :second) |> div(60)
-        end
+            _ ->
+              Map.get(changes, :expires_on)
+          end
 
+        duration_in_mins =
+          case Map.get(changes, :expires_on) do
+            nil ->
+              changes.duration_mins
+
+            _ ->
+              DateTime.diff(expires_on, now, :second) |> div(60)
+          end
 
         data = %{
           hotspot
@@ -103,24 +108,30 @@ defmodule Radius.Auth do
       true ->
         changes = changeset.changes
         now = DateTime.utc_now()
-        expires_on = case Map.get(changes, :expires_on ) do
-          nil ->
-            DateTime.add(now, changes.duration_mins * 60 - 5, :second)
-          _ -> Map.get(changes, :expires_on )
-        end
 
-        duration_in_mins = case Map.get(changes, :expires_on ) do
-          nil ->
-            changes.duration_mins
-          _ ->
-            DateTime.diff(expires_on, now, :second) |> div(60)
-        end
+        expires_on =
+          case Map.get(changes, :expires_on) do
+            nil ->
+              DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+
+            _ ->
+              Map.get(changes, :expires_on)
+          end
+
+        duration_in_mins =
+          case Map.get(changes, :expires_on) do
+            nil ->
+              changes.duration_mins
+
+            _ ->
+              DateTime.diff(expires_on, now, :second) |> div(60)
+          end
 
         data = %{
           ppoe
           | username: changes.username,
             password: changes.password,
-            customer: changes.customer,
+            subscription_uuid: changes.subscription_uuid,
             service: "ppoe",
             expire_on: expires_on,
             plan: changes.plan,
