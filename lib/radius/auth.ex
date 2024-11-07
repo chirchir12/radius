@@ -20,7 +20,7 @@ defmodule Radius.Auth do
 
   def login(:ppoe, attrs) do
     with {:ok, data} <- validate_login(%Ppoe{}, attrs),
-         :ok <- Sessions.check_session_exists(data.customer),
+         :ok <- Sessions.check_session_exists(data.subscription_uuid),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
          {:ok, %Oban.Job{}} <-
            TaskSchedular.schedule(data.subscription_uuid, data.duration_mins, :ppoe) do
