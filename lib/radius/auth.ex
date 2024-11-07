@@ -65,16 +65,16 @@ defmodule Radius.Auth do
         now = DateTime.utc_now()
         # -5 seconds to avoid race condition
         expires_on =
-          case Map.get(changes, :expires_on) do
+          case Map.get(changes, :expire_on) do
             nil ->
               DateTime.add(now, changes.duration_mins * 60 - 5, :second)
 
             _ ->
-              Map.get(changes, :expires_on)
+              Map.get(changes, :expire_on)
           end
 
         duration_in_mins =
-          case Map.get(changes, :expires_on) do
+          case Map.get(changes, :expire_on) do
             nil ->
               changes.duration_mins
 
@@ -110,16 +110,16 @@ defmodule Radius.Auth do
         now = DateTime.utc_now()
 
         expires_on =
-          case Map.get(changes, :expires_on) do
+          case Map.get(changes, :expire_on) do
             nil ->
               DateTime.add(now, changes.duration_mins * 60 - 5, :second)
 
             _ ->
-              Map.get(changes, :expires_on)
+              Map.get(changes, :expire_on)
           end
 
         duration_in_mins =
-          case Map.get(changes, :expires_on) do
+          case Map.get(changes, :expire_on) do
             nil ->
               changes.duration_mins
 
