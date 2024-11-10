@@ -10,7 +10,6 @@ defmodule Radius.Policy.PpoeTest do
     policy = %Ppoe{
       pool: "test_pool",
       plan: Ecto.UUID.generate(),
-      profile: "test_profile",
       upload: 10,
       download: 5,
       duration: 3600,

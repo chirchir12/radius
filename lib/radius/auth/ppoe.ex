@@ -1,4 +1,8 @@
 defmodule Radius.Auth.Ppoe do
+  @moduledoc """
+  Functionality to auth PPP users
+  Note: subscription_uuid becomes customer
+  """
   alias Radius.Repo
   import Ecto.Query, warn: false
   alias Radius.Auth.Radcheck
