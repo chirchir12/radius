@@ -30,7 +30,7 @@ defmodule RadiusWeb.NasController do
     end
   end
 
-  def create(conn, %{"router" => router_params}) do
+  def create(conn, %{"params" => router_params}) do
     with {:ok, router} <- Nas.create_router(router_params) do
       conn
       |> put_status(:created)
@@ -38,7 +38,7 @@ defmodule RadiusWeb.NasController do
     end
   end
 
-  def update(conn, %{"id" => id, "router" => router_params}) do
+  def update(conn, %{"id" => id, "params" => router_params}) do
     with {:ok, router} <- Nas.get_router(id),
          {:ok, updated_router} <- Nas.update_router(router, router_params) do
       render(conn, :show, router: updated_router)
@@ -47,8 +47,8 @@ defmodule RadiusWeb.NasController do
 
   def delete(conn, %{"id" => id}) do
     with {:ok, router} <- Nas.get_router(id),
-         {:ok, _deleted_router} <- Nas.delete_router(router) do
-      send_resp(conn, :no_content, "")
+         {:ok, deleted_router} <- Nas.delete_router(router) do
+      render(conn, :show, router: deleted_router)
     end
   end
 
