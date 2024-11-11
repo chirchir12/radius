@@ -19,7 +19,7 @@ defmodule RadiusWeb.Router do
   end
 
   scope "/v1/api", RadiusWeb do
-    pipe_through [:api, :ensure_authenticated]
+    pipe_through [:api, :is_system, :ensure_authenticated]
 
     # Hotspot Policy routes
     post "/policies/hotspot", PolicyController, :create_hotspot
