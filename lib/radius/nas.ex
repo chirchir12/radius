@@ -4,12 +4,9 @@ defmodule Radius.Nas do
   alias Radius.Nas.Router
   alias Radius.RmqPublisher
 
-  def list_routers(company_id) when is_integer(company_id) do
-    {:ok, Repo.all(from r in Router, where: r.company_id == ^company_id)}
-  end
-
-  def list_routers(company) do
-    {:ok, Repo.all(from r in Router, where: r.company == ^company)}
+  def list_routers(company_id) do
+    query = from r in Router, where: r.company_id == ^company_id, order_by: [desc: r.id]
+    {:ok, Repo.all(query)}
   end
 
   def list_routers do
