@@ -83,6 +83,12 @@ defmodule Radius.RmqConsumers.PpoeSubscriptionConsumer do
     end
   end
 
+  def handle_subscription(%{action: "delete_subscription", subscription_uuid: subscription_uuid}) do
+    with {:ok, _data} <- Auth.logout(:ppoe, subscription_uuid) do
+      :ok
+    end
+  end
+
   def handle_subscription(%{action: "delete_customer", subscription_uuid: subscription_uuid}) do
     with {:ok, _data} <- Auth.logout(:ppoe, subscription_uuid) do
       :ok
