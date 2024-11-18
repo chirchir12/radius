@@ -96,15 +96,19 @@ defmodule Radius.Auth.Ppoe do
     end
   end
 
-  def update_username_password(%{
-        subscription_uuid: subscription_uuid,
-        username: username,
-        password: password
-      }) do
+  def update_username_password(
+        %{
+          subscription_uuid: subscription_uuid,
+          username: username,
+          password: password
+        } = params
+      ) do
     query =
       from rc in Radcheck,
         where: rc.customer == ^subscription_uuid and rc.attribute == "Cleartext-Password",
         update: [set: [username: ^username, value: ^password]]
+
+    _ = update_plan(params)
 
     _ = Repo.update_all(query, [])
     :ok
