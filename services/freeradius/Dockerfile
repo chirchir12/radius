@@ -10,11 +10,9 @@ RUN echo '#!/bin/bash\n\
 mkdir -p /var/log/freeradius\n\
 touch /var/log/freeradius/radius.log\n\
 chown -R freerad:freerad /var/log/freeradius\n\
-freeradius -f &\n\
+freeradius -X &\n\
 tail -f /var/log/freeradius/radius.log' > /start.sh && \
     chmod +x /start.sh
 
-# Enable rest module
-RUN ln -s /etc/freeradius/mods-available/rest /etc/freeradius/mods-enabled/
 
 CMD ["/start.sh"]
