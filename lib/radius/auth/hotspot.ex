@@ -29,7 +29,8 @@ defmodule Radius.Auth.Hotspot do
       :duration_mins,
       :plan,
       :priority,
-      :expire_on
+      :expire_on,
+      :subscription
     ])
     |> validate_required([:username, :password, :customer, :duration_mins, :plan])
     |> validate_inclusion(:service, ["hotspot"])
