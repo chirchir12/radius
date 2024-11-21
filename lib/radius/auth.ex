@@ -91,7 +91,8 @@ defmodule Radius.Auth do
             expire_on: expires_on,
             plan: changes.plan,
             priority: Map.get(changes, :priority, 10),
-            duration_mins: duration_in_mins
+            duration_mins: duration_in_mins,
+            subscription: changes.subscription
         }
 
         {:ok, data}

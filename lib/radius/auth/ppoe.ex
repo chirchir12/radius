@@ -52,6 +52,16 @@ defmodule Radius.Auth.Ppoe do
       expire_on: ppoe.expire_on
     }
 
+    subscription = %{
+      username: ppoe.username,
+      attribute: "Subscription-Id",
+      op: ":=",
+      value: ppoe.subscription_uuid,
+      customer: ppoe.subscription_uuid,
+      service: "ppoe",
+      expire_on: ppoe.expire_on
+    }
+
     profile = %{
       username: ppoe.username,
       attribute: "User-Profile",
@@ -64,12 +74,14 @@ defmodule Radius.Auth.Ppoe do
 
     cred_changeset = Radcheck.changeset(%Radcheck{}, credentials)
     prof_changeset = Radcheck.changeset(%Radcheck{}, profile)
+    sub_changeset = Radcheck.changeset(%Radcheck{}, subscription)
 
-    if cred_changeset.valid? and prof_changeset.valid? do
+    if cred_changeset.valid? and prof_changeset.valid? and sub_changeset.valid? do
       valid_credentials = cred_changeset.changes
       valid_profile = prof_changeset.changes
+      valid_subscription = sub_changeset.changes
 
-      case Repo.insert_all(Radcheck, [valid_credentials, valid_profile]) do
+      case Repo.insert_all(Radcheck, [valid_credentials, valid_profile, valid_subscription]) do
         {2, nil} ->
           {:ok, ppoe}
 
