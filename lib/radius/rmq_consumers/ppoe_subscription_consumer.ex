@@ -74,6 +74,10 @@ defmodule Radius.RmqConsumers.PpoeSubscriptionConsumer do
   def handle_subscription(%{action: "activate_session"} = params) do
     with {:ok, _data} <- Auth.login(:ppoe, params) do
       :ok
+    else
+      error ->
+        :ok = Logger.error("Failed to login ppoe: #{inspect(error)}")
+        :ok
     end
   end
 
