@@ -1,10 +1,18 @@
 defmodule RadiusWeb.AccountingController do
   use RadiusWeb, :controller
+  alias Radius.Accounting
+  require Logger
 
   def create(conn, params) do
     formatted_params = format_params(params)
-    IO.inspect(formatted_params, label: "formatted_params")
-    conn |> json(%{})
+
+    with {:ok, :ok} <- Accounting.publish(formatted_params) do
+      conn |> json(%{})
+    else
+      error ->
+        Logger.error("Accounting Errror: #{inspect(error)}: Params #{inspect(params)}")
+        conn |> json(%{})
+    end
   end
 
   def format_params(params) do
