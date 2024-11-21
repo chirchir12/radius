@@ -19,10 +19,10 @@ defmodule RadiusWeb.AccountingController do
   defp format_value("integer", value), do: value
   defp format_value("string", value), do: value
   defp format_value("ipaddr", value), do: value
-  defp format_value("date", value), do: format_date(value)
+  defp format_value("date", value), do: value
   defp format_value(_, value), do: value
 
-  defp format_date(date_string) do
+  def format_date(date_string) do
     # Assuming the date format is "Nov 21 2024 09:36:31 UTC"
     # You can parse and format it as needed
     {:ok, datetime, _} = DateTime.from_iso8601(date_string)
