@@ -1,6 +1,6 @@
 rest {
 	# Your backend server URL
-	connect_uri = "http://backend:8000"
+	connect_uri = "http://radius:4000"
 
 	tls {
 		verify_cert = no

@@ -13,6 +13,11 @@ defmodule RadiusWeb.Router do
     plug RadiusWeb.EnsureAuthenticatedPlug
   end
 
+  scope "/v1/api/accounting", RadiusWeb do
+    pipe_through [:api]
+    post "/", AccountingController, :create
+  end
+
   scope "/v1/api/system", RadiusWeb do
     pipe_through [:api, :is_system, :ensure_authenticated]
     get "/nas", NasController, :index
