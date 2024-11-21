@@ -16,7 +16,7 @@ defmodule RadiusWeb.AccountingController do
     |> Enum.into(%{})
   end
 
-  defp format_value("integer", value), do: Integer.to_string(value)
+  defp format_value("integer", value), do: value
   defp format_value("string", value), do: value
   defp format_value("ipaddr", value), do: value
   defp format_value("date", value), do: format_date(value)
