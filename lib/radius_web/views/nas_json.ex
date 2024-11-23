@@ -21,7 +21,8 @@ defmodule RadiusWeb.NasJSON do
       community: router.community,
       description: router.description,
       company_id: router.company_id,
-      router_id: router.uuid
+      router_id: router.uuid,
+      status: Radius.Helper.update_status(router.last_seen, :devices)
     }
   end
 end

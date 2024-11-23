@@ -14,7 +14,8 @@ defmodule Radius.Nas.Router do
              :community,
              :description,
              :company_id,
-             :uuid
+             :uuid,
+             :last_seen
            ]}
   schema "nas" do
     field :nasname, :string
@@ -27,6 +28,7 @@ defmodule Radius.Nas.Router do
     field :description, :string
     field :company_id, Ecto.UUID
     field :uuid, Ecto.UUID
+    field :last_seen, :utc_datetime
   end
 
   def changeset(nas, attrs) do
@@ -42,7 +44,8 @@ defmodule Radius.Nas.Router do
       :community,
       :description,
       :company_id,
-      :uuid
+      :uuid,
+      :last_seen
     ])
     |> validate_required([:nasname, :shortname, :type, :secret, :company_id])
     |> unique_constraint(:id, name: "nas_pkey")
