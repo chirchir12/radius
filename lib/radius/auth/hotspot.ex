@@ -17,6 +17,7 @@ defmodule Radius.Auth.Hotspot do
     field :plan, Ecto.UUID
     field :priority, :integer, default: 0
     field :subscription, Ecto.UUID
+    field :activated_at, :utc_datetime
   end
 
   def changeset(hotspot, attrs) do
@@ -30,7 +31,8 @@ defmodule Radius.Auth.Hotspot do
       :plan,
       :priority,
       :expire_on,
-      :subscription
+      :subscription,
+      :activated_at
     ])
     |> validate_required([:username, :password, :customer, :duration_mins, :plan])
     |> validate_inclusion(:service, ["hotspot"])
