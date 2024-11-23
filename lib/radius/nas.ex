@@ -34,8 +34,8 @@ defmodule Radius.Nas do
     end
   end
 
-  def get_by_uid(uid) do
-    case Repo.get_by(Router, uid: uid) do
+  def get_by_uid(uuid) do
+    case Repo.get_by(Router, uuid: uuid) do
       nil -> {:error, :router_not_found}
       router -> {:ok, router}
     end
