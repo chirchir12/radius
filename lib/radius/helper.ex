@@ -68,6 +68,38 @@ defmodule Radius.Helper do
     func.(params)
   end
 
+  def update_status(last_seen, type, offline_after \\ 1)
+
+  def update_status(last_seen, :devices, offline_after) do
+    current_time = DateTime.utc_now()
+    last_seen = get_last_seen(last_seen)
+
+    cond do
+      last_seen == nil ->
+        "inactive"
+
+      DateTime.diff(current_time, last_seen) > offline_after * 60 ->
+        "inactive"
+
+      true ->
+        "active"
+    end
+  end
+
+  defp get_last_seen(last_seen) do
+    case last_seen do
+      %NaiveDateTime{} ->
+        {:ok, datetime} = DateTime.from_naive(last_seen, "Etc/UTC")
+        datetime
+
+      %DateTime{} ->
+        last_seen
+
+      _ ->
+        nil
+    end
+  end
+
   defp atomize_key(key) when is_binary(key), do: String.to_atom(key)
   defp atomize_key(key) when is_atom(key), do: key
 

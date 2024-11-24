@@ -12,7 +12,7 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.customer),
          {:ok, %Hotspot{} = data} <- Hotspot.login(data),
          {:ok, %Oban.Job{}} <-
-           TaskSchedular.schedule(data.customer, data.duration_mins, :hotspot) do
+           TaskSchedular.schedule(data.customer, data.duration_mins + 1, :hotspot) do
       :ok = HotspotPub.session_activated(data, "hotspot_session_activated")
       {:ok, data}
     end
@@ -23,7 +23,7 @@ defmodule Radius.Auth do
          :ok <- Sessions.check_session_exists(data.subscription_uuid),
          {:ok, %Ppoe{} = data} <- Ppoe.login(data),
          {:ok, %Oban.Job{}} <-
-           TaskSchedular.schedule(data.subscription_uuid, data.duration_mins, :ppoe) do
+           TaskSchedular.schedule(data.subscription_uuid, data.duration_mins + 1, :ppoe) do
       :ok = PpoePub.session_activated(data, "ppoe_session_activated")
       {:ok, data}
     end
@@ -65,12 +65,17 @@ defmodule Radius.Auth do
         now = DateTime.utc_now()
         # -5 seconds to avoid race condition
         expires_on =
-          case Map.get(changes, :expire_on) do
-            nil ->
-              DateTime.add(now, changes.duration_mins * 60 - 5, :second)
-
-            _ ->
+          cond do
+            Map.get(changes, :expire_on) !== nil ->
               Map.get(changes, :expire_on)
+
+            Map.get(changes, :activated_at) !== nil ->
+              activated_at = Map.get(changes, :activated_at)
+
+              DateTime.add(activated_at, changes.duration_mins * 60, :second)
+
+            true ->
+              DateTime.add(now, changes.duration_mins * 60, :second)
           end
 
         duration_in_mins =
@@ -91,7 +96,8 @@ defmodule Radius.Auth do
             expire_on: expires_on,
             plan: changes.plan,
             priority: Map.get(changes, :priority, 10),
-            duration_mins: duration_in_mins
+            duration_mins: duration_in_mins,
+            subscription: changes.subscription
         }
 
         {:ok, data}
@@ -112,7 +118,7 @@ defmodule Radius.Auth do
         expires_on =
           case Map.get(changes, :expire_on) do
             nil ->
-              DateTime.add(now, changes.duration_mins * 60 - 5, :second)
+              DateTime.add(now, changes.duration_mins * 60, :second)
 
             _ ->
               Map.get(changes, :expire_on)

@@ -17,5 +17,7 @@ Service to handle authentication and authorization of Internet Users
 | radius_hotspot_subscription_consumer | hotspot_subscription_changes_rk | Internet Hotspot Subscription notification |
 | radius_ppoe_subscription_consumer    | ppoe_subscription_changes_rk    | Internet Pppoe Subscription notification   |
 |                                      | router_changes_rk               | notifications for router changes           |
+|                                      | hotspot_accounting_rk           | notifications for hotspot accounting data  |
+|                                      | ppoe_accounting_rk              | notifications for ppoe accounting data     |
 
 ###

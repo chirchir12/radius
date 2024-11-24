@@ -16,6 +16,8 @@ defmodule Radius.Auth.Hotspot do
     field :expire_on, :utc_datetime
     field :plan, Ecto.UUID
     field :priority, :integer, default: 0
+    field :subscription, Ecto.UUID
+    field :activated_at, :utc_datetime
   end
 
   def changeset(hotspot, attrs) do
@@ -28,7 +30,9 @@ defmodule Radius.Auth.Hotspot do
       :duration_mins,
       :plan,
       :priority,
-      :expire_on
+      :expire_on,
+      :subscription,
+      :activated_at
     ])
     |> validate_required([:username, :password, :customer, :duration_mins, :plan])
     |> validate_inclusion(:service, ["hotspot"])
@@ -52,6 +56,16 @@ defmodule Radius.Auth.Hotspot do
       expire_on: hotspot.expire_on
     }
 
+    subscription = %{
+      username: hotspot.username,
+      attribute: "Subscription-Id",
+      op: ":=",
+      value: hotspot.subscription,
+      customer: hotspot.customer,
+      service: "hotspot",
+      expire_on: hotspot.expire_on
+    }
+
     group = %{
       username: hotspot.username,
       groupname: hotspot.plan,
@@ -62,6 +76,7 @@ defmodule Radius.Auth.Hotspot do
 
     case Repo.transaction(fn ->
            with {:ok, %Radcheck{}} <- Radcheck.create_radcheck(check),
+                {:ok, %Radcheck{}} <- Radcheck.create_radcheck(subscription),
                 {:ok, %Radusergroup{}} <- Radusergroup.create_radusergroup(group) do
              :ok
            end
