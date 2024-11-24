@@ -52,6 +52,12 @@ defmodule Radius.Nas.Router do
     |> generate_uuid()
   end
 
+  def update_accounting_changeset(router, attrs) do
+    router
+    |> cast(attrs, [:last_seen, :nasname])
+    |> validate_required([:last_seen, :nasname])
+  end
+
   defp generate_uuid(changeset) do
     case get_field(changeset, :uuid) do
       nil -> put_change(changeset, :uuid, Ecto.UUID.generate())

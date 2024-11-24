@@ -1,6 +1,8 @@
 defmodule Radius.Accounting do
   alias Radius.RmqPublisher
   alias Radius.Nas
+  alias Radius.Repo
+  alias Radius.Nas.Router
   require Logger
 
   def publish(%{"framed_protocol" => "PPP"} = params) do
@@ -19,12 +21,13 @@ defmodule Radius.Accounting do
     RmqPublisher.publish(params, routing_key)
   end
 
-  def update_router(%{"nas_identifier" => nas_identifier}) do
+  def update_router(%{"nas_identifier" => nas_identifier, "nas_ip_address" => nas_ip_address}) do
     Task.start(fn ->
       case Nas.get_by_uid(nas_identifier) do
         {:ok, router} ->
           Logger.info("Router found: #{router.id}")
-          Nas.update_router(router, %{last_seen: DateTime.utc_now()})
+          data = %{last_seen: DateTime.utc_now(), nasname: nas_ip_address}
+          Router.update_accounting_changeset(router, data) |> Repo.update()
           :ok
 
         {:error, _} ->
