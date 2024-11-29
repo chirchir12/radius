@@ -91,6 +91,7 @@ accounting {
 	sql
 	exec
 	attr_filter.accounting_response
+	rest
 }
 
 session {
