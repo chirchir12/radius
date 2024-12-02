@@ -1,7 +1,7 @@
 server server01 {
 listen {
 
-	ipaddr = 0.0.0.0
+	ipaddr = 45.67.217.130
 	type = auth
 	port = 1812
 	limit {
@@ -11,7 +11,7 @@ listen {
 	}
 }
 listen {
-	ipaddr = 0.0.0.0
+	ipaddr = 45.67.217.130
 	port = 1813
 	type = acct
 
