@@ -84,6 +84,10 @@ defmodule Radius.RmqConsumers.PpoeSubscriptionConsumer do
   def handle_subscription(%{action: "deactivate_session", subscription_uuid: subscription_uuid}) do
     with {:ok, _data} <- Auth.logout(:ppoe, subscription_uuid) do
       :ok
+    else
+      error ->
+        :ok = Logger.error("Failed to deactivate ppoe: #{inspect(error)}")
+        :ok
     end
   end
 
