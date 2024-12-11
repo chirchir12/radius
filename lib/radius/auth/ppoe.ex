@@ -9,6 +9,7 @@ defmodule Radius.Auth.Ppoe do
 
   use Ecto.Schema
   import Ecto.Changeset
+  require Logger
 
   embedded_schema do
     field :username, :string
@@ -82,14 +83,18 @@ defmodule Radius.Auth.Ppoe do
       valid_subscription = sub_changeset.changes
 
       case Repo.insert_all(Radcheck, [valid_credentials, valid_profile, valid_subscription]) do
-        {2, nil} ->
+        {3, nil} ->
           {:ok, ppoe}
 
-        {_, _errors} ->
-          {:error, %{credentials: cred_changeset, profile: prof_changeset}}
+        {_, errors} ->
+          Logger.error("[#{__MODULE__}] -Failed to create session - #{inspect(errors)}")
+
+          {:error,
+           %{credentials: cred_changeset, profile: prof_changeset, subscription: sub_changeset}}
       end
     else
-      {:error, %{credentials: cred_changeset, profile: prof_changeset}}
+      {:error,
+       %{credentials: cred_changeset, profile: prof_changeset, subscription: sub_changeset}}
     end
   end
 
