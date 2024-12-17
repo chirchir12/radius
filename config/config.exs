@@ -43,7 +43,7 @@ config :phoenix, :json_library, Jason
 config :radius, Oban,
   engine: Oban.Engines.Basic,
   plugins: [
-    {Oban.Plugins.Pruner, max_age: 300},
+    {Oban.Plugins.Pruner, max_age: 86400},
     {Oban.Plugins.Cron,
      crontab: [
        {"*/5 * * * *", Radius.Auth.SessionDeleteAll, args: %{check_after_in_mins: 5}}
