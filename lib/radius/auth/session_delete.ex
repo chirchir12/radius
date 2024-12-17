@@ -12,6 +12,7 @@ defmodule Radius.Auth.SessionDelete do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"service_type" => service_type, "customer" => customer_id}}) do
+    Logger.info("Deleting Individual internet session sessions")
     service_type
     |> run_task(customer_id)
   end
@@ -28,6 +29,9 @@ defmodule Radius.Auth.SessionDelete do
       {:error, :no_session_to_delete} ->
         Logger.warning("No expired hotspot sessions to delete for customer #{customer_id}")
         :ok
+      {:error, error} ->
+        Logger.error("Failed to prune session for customer #{customer_id} - Error #{error}")
+        :error
     end
   end
 

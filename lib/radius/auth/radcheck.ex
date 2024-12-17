@@ -46,6 +46,7 @@ defmodule Radius.Auth.Radcheck do
     case Repo.delete_all(query) do
       {0, []} -> {:error, :no_session_to_delete}
       {_count, deleted_items} -> {:ok, deleted_items}
+      error -> {:error, error}
     end
   end
 
