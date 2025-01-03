@@ -27,7 +27,6 @@ defmodule Radius.Hotspot do
   defp publish(data) do
     queue = queue()
     {:ok, _} = RmqPublisher.publish(data, queue)
-    Logger.info("Published #{data.action} to #{queue}")
     :ok
   end
 

@@ -33,3 +33,4 @@ radius-*.tar
 *.log
 
 migration_scripts
+.codegpt
