@@ -17,7 +17,7 @@ defmodule RadiusWeb.NasJSON do
       type: router.type,
       ports: router.ports,
       secret: router.secret,
-      server: router.secret,
+      server: router.server,
       community: router.community,
       description: router.description,
       company_id: router.company_id,
