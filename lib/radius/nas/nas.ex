@@ -34,7 +34,6 @@ defmodule Radius.Nas.Router do
   def changeset(nas, attrs) do
     nas
     |> cast(attrs, [
-      :id,
       :nasname,
       :shortname,
       :type,
