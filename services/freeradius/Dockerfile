@@ -10,7 +10,7 @@ RUN echo '#!/bin/bash\n\
 mkdir -p /var/log/freeradius\n\
 touch /var/log/freeradius/radius.log\n\
 chown -R freerad:freerad /var/log/freeradius\n\
-freeradius -X &\n\
+freeradius -f &\n\
 tail -f /var/log/freeradius/radius.log' > /start.sh && \
     chmod +x /start.sh
 
