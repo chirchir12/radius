@@ -22,6 +22,7 @@ defmodule RadiusWeb.NasJSON do
       description: router.description,
       company_id: router.company_id,
       router_id: router.uuid,
+      vpn_ip: router.vpn_ip,
       status: Radius.Helper.update_status(router.last_seen, :devices)
     }
   end

@@ -26,6 +26,8 @@ defmodule Radius.Nas.Router do
     field :server, :string
     field :community, :string
     field :description, :string
+    # validate ipv4
+    field :vpn_ip, :string
     field :company_id, Ecto.UUID
     field :uuid, Ecto.UUID
     field :last_seen, :utc_datetime
@@ -44,7 +46,8 @@ defmodule Radius.Nas.Router do
       :description,
       :company_id,
       :uuid,
-      :last_seen
+      :last_seen,
+      :vpn_ip
     ])
     |> validate_required([:nasname, :shortname, :type, :secret, :company_id])
     |> unique_constraint(:id, name: "nas_pkey")

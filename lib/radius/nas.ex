@@ -93,7 +93,8 @@ defmodule Radius.Nas do
         company_id: router.company_id,
         uuid: router.uuid,
         action: action,
-        sender: :radius
+        sender: :radius,
+        vpn_ip: router.vpn_ip
       }
 
     {:ok, _} = RmqPublisher.publish(data, queue)
